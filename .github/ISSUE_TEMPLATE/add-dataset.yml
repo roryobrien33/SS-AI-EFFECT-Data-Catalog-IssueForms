@@ -1,0 +1,240 @@
+name: Add Dataset
+description: Submit a request to add a new dataset to the AI-EFFECT data catalog
+title: "[ADD DATASET] "
+labels:
+  - add-dataset
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add Dataset
+
+        Use this form to request a new dataset entry in the AI-EFFECT data catalog.
+
+        This form collects metadata that appears on the existing dataset page structure:
+
+        - Description
+        - Themes
+        - Overview
+        - Distributions
+        - Data quality
+        - Data lineage
+
+        The webpage layout must remain unchanged. This form only updates the catalog data.
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Dataset identifier
+      description: >
+        Optional. Unique machine-readable identifier, for example
+        ex:uc1-training-dataset. Leave blank to auto-generate one.
+      placeholder: ex:uc1-training-dataset
+    validations:
+      required: false
+
+  - type: input
+    id: title
+    attributes:
+      label: Dataset title
+      description: Human-readable dataset title. Titles do not need to be unique.
+      placeholder: Training data set for UC1
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Dataset description
+      description: Description shown in the dataset page Description section.
+      placeholder: Describe the dataset, its purpose, scope, and relevant context.
+    validations:
+      required: true
+
+  - type: input
+    id: publisher
+    attributes:
+      label: Publisher name
+      description: Publisher shown in the dataset page Overview section.
+      placeholder: DTU
+    validations:
+      required: true
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Dataset status
+      description: Current workflow/publication status of the dataset.
+      options:
+        - planned
+        - draft
+        - published
+        - deprecated
+        - withdrawn
+    validations:
+      required: false
+
+  - type: input
+    id: license
+    attributes:
+      label: License title or URL
+      description: License shown in the dataset page Overview section.
+      placeholder: TBD
+    validations:
+      required: true
+
+  - type: input
+    id: series
+    attributes:
+      label: Dataset series identifier
+      description: Optional. Existing dataset series identifier.
+      placeholder: ex:uc1-multi-energy-sector-coupling
+    validations:
+      required: false
+
+  - type: input
+    id: policy
+    attributes:
+      label: Policy UID
+      description: Optional. Existing policy UID linked to this dataset.
+      placeholder: plcy:open-information
+    validations:
+      required: false
+
+  - type: textarea
+    id: themes
+    attributes:
+      label: Theme / concept identifiers
+      description: |
+        Optional. One concept identifier per line.
+
+        Example:
+        ex:energy
+        ex:training-data
+        ex:sector-coupling
+      placeholder: |
+        ex:energy
+        ex:training-data
+    validations:
+      required: false
+
+  - type: dropdown
+    id: add_distribution
+    attributes:
+      label: Add a distribution?
+      description: Select Yes if this dataset should include a downloadable/access distribution.
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+
+  - type: input
+    id: distribution_identifier
+    attributes:
+      label: Distribution identifier
+      description: Optional. Leave blank to auto-generate if adding a distribution.
+      placeholder: ex:uc1-training-dataset-csv
+    validations:
+      required: false
+
+  - type: input
+    id: distribution_format
+    attributes:
+      label: Distribution format
+      description: File/access format shown in the Distributions table.
+      placeholder: csv
+    validations:
+      required: false
+
+  - type: input
+    id: distribution_url
+    attributes:
+      label: Distribution access URL
+      description: URL shown in the Distributions table.
+      placeholder: https://example.com/data.csv
+    validations:
+      required: false
+
+  - type: input
+    id: distribution_issued
+    attributes:
+      label: Distribution issued date
+      description: Optional. Use YYYY-MM-DD.
+      placeholder: "2026-01-01"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: add_quality
+    attributes:
+      label: Add data quality measurement?
+      description: Select Yes if this dataset should include a DQV quality measurement.
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+
+  - type: input
+    id: quality_measurement_identifier
+    attributes:
+      label: Quality measurement identifier
+      description: Optional. Leave blank to auto-generate if adding a quality measurement.
+      placeholder: ex:qm-uc1-training-completeness
+    validations:
+      required: false
+
+  - type: input
+    id: metric_identifier
+    attributes:
+      label: Metric identifier
+      description: Existing metric identifier measured by this quality measurement.
+      placeholder: ex:fkrhkqewjewrc
+    validations:
+      required: false
+
+  - type: input
+    id: quality_measurement_value
+    attributes:
+      label: Quality measurement value
+      description: Numeric value for the measurement.
+      placeholder: "0.9"
+    validations:
+      required: false
+
+  - type: input
+    id: quality_measurement_date
+    attributes:
+      label: Quality measurement generated date
+      description: Optional. Use YYYY-MM-DD.
+      placeholder: "2026-01-01"
+    validations:
+      required: false
+
+  - type: textarea
+    id: lineage
+    attributes:
+      label: Source / input dataset identifiers
+      description: |
+        Optional. One source dataset identifier per line.
+        These map to dataset lineage / wasDerivedFrom.
+
+        Example:
+        ex:source-dataset-a
+        ex:source-dataset-b
+      placeholder: |
+        ex:source-dataset-a
+        ex:source-dataset-b
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These may not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
