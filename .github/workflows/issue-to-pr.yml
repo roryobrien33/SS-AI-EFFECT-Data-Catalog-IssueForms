@@ -1,0 +1,161 @@
+name: Issue to PR (Add Dataset)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  process-issue:
+    runs-on: ubuntu-latest
+
+    if: contains(github.event.issue.title, '[ADD DATASET]')
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Extract issue body
+        id: extract
+        run: |
+          echo '${{ github.event.issue.body }}' > issue.txt
+
+      - name: Parse issue → YAML
+        run: |
+          python << 'EOF'
+          import yaml, re
+
+          with open("issue.txt", "r", encoding="utf-8") as f:
+              body = f.read()
+
+          def extract_field(label):
+              pattern = rf"{label}\n(.*?)\n\n"
+              m = re.search(pattern, body, re.DOTALL)
+              return m.group(1).strip() if m else None
+
+          def extract_list(label):
+              block = extract_field(label)
+              if not block:
+                  return []
+              return [x.strip() for x in block.split("\n") if x.strip()]
+
+          # --- Extract fields ---
+          identifier = extract_field("Dataset identifier")
+          title = extract_field("Dataset title")
+          description = extract_field("Dataset description")
+          publisher = extract_field("Publisher name")
+          status = extract_field("Dataset status")
+          license_val = extract_field("License title or URL")
+          series = extract_field("Dataset series identifier")
+          policy = extract_field("Policy UID")
+          themes = extract_list("Theme / concept identifiers")
+          lineage = extract_list("Source / input dataset identifiers")
+
+          # --- Simple ID fallback ---
+          if not identifier:
+              identifier = "ex:" + title.lower().replace(" ", "-")
+
+          dist_id = extract_field("Distribution identifier")
+          dist_format = extract_field("Distribution format")
+          dist_url = extract_field("Distribution access URL")
+          dist_issued = extract_field("Distribution issued date")
+
+          qm_id = extract_field("Quality measurement identifier")
+          metric = extract_field("Metric identifier")
+          qm_value = extract_field("Quality measurement value")
+          qm_date = extract_field("Quality measurement generated date")
+
+          if not dist_id and dist_format:
+              dist_id = identifier + "-dist"
+
+          if not qm_id and metric:
+              qm_id = identifier + "-qm"
+
+          # --- Load existing catalog ---
+          with open("data-catalog/data-catalog.yaml", "r", encoding="utf-8") as f:
+              catalog = yaml.safe_load(f)
+
+          # --- Create dataset ---
+          dataset = {
+              "identifier": identifier,
+              "title": title,
+              "description": description,
+              "publisher": {"name": publisher},
+              "license": {"title": license_val},
+          }
+
+          if status:
+              dataset["status"] = status
+          if series:
+              dataset["inSeries"] = series
+          if policy:
+              dataset["hasPolicy"] = policy
+          if themes:
+              dataset["theme"] = themes
+          if lineage:
+              dataset["wasDerivedFrom"] = lineage
+
+          if dist_id:
+              dataset["distribution"] = [dist_id]
+
+          catalog.setdefault("datasets", []).append(dataset)
+
+          # --- Add distribution ---
+          if dist_id and dist_format:
+              dist = {
+                  "identifier": dist_id,
+                  "format": dist_format,
+                  "accessURL": dist_url,
+              }
+              if dist_issued:
+                  dist["issued"] = dist_issued
+              catalog.setdefault("distributions", []).append(dist)
+
+          # --- Add quality measurement ---
+          if qm_id and metric and qm_value:
+              qm = {
+                  "identifier": qm_id,
+                  "computedOn": identifier,
+                  "isMeasurementOf": metric,
+                  "value": float(qm_value),
+              }
+              if qm_date:
+                  qm["generatedAtTime"] = qm_date
+              catalog.setdefault("qualityMeasurements", []).append(qm)
+
+          # --- Write back ---
+          with open("data-catalog/data-catalog.yaml", "w", encoding="utf-8") as f:
+              yaml.dump(catalog, f, sort_keys=False)
+
+          EOF
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          BRANCH="add-dataset-${{ github.event.issue.number }}"
+          git checkout -b $BRANCH
+
+          git add data-catalog/data-catalog.yaml
+          git commit -m "Add dataset from issue #${{ github.event.issue.number }}"
+
+          git push origin $BRANCH
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: add-dataset-${{ github.event.issue.number }}
+          title: "Add dataset from issue #${{ github.event.issue.number }}"
+          body: "Automated dataset creation from issue submission."
