@@ -405,6 +405,16 @@ datasets:
     status: None
     distribution:
       - ex:test-o5-distribution
+- identifier: ex:test-06
+  title: TEST-06
+  description: TESTING TESTING
+  publisher:
+    name: EPRI
+  license:
+    title: TBD
+  status: draft
+  distribution:
+  - ex:test-06-distribution
 concepts:
   - prefLabel: energy
     identifier: ex:energy
@@ -637,3 +647,6 @@ distributions:
   - identifier: ex:test-o5-distribution
     format: csv
     accessURL: https://example.com/test.csv
+- identifier: ex:test-06-distribution
+  format: CSV
+  accessURL: https://tester.com/data.csv
