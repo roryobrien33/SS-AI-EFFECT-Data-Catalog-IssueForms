@@ -125,17 +125,36 @@ jobs:
               print(msg)
               sys.exit(1)
 
+          
           def clean_value(value):
               if value is None:
                   return ""
-
-              value = str(value).strip()
-
+          
+              value = str(value)
+          
+              # Remove common invisible/control characters that can appear when copying from web pages/editors.
+              value = (
+                  value
+                  .replace("\u200e", "")  # left-to-right mark
+                  .replace("\u200f", "")  # right-to-left mark
+                  .replace("\ufeff", "")  # byte order mark
+                  .replace("\u202a", "")  # left-to-right embedding
+                  .replace("\u202b", "")  # right-to-left embedding
+                  .replace("\u202c", "")  # pop directional formatting
+                  .replace("\u2066", "")  # left-to-right isolate
+                  .replace("\u2067", "")  # right-to-left isolate
+                  .replace("\u2068", "")  # first strong isolate
+                  .replace("\u2069", "")  # pop directional isolate
+              )
+          
+              value = value.strip()
+          
               if value in {"_No response_", "No response"}:
                   return ""
-
+          
               return value
 
+         
           def extract_field(body, label):
               pattern = rf"###\s+{re.escape(label)}\s*\n+(.*?)(?=\n###\s+|\Z)"
               match = re.search(pattern, body, re.DOTALL | re.IGNORECASE)
