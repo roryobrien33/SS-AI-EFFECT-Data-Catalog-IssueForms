@@ -125,13 +125,12 @@ jobs:
               print(msg)
               sys.exit(1)
 
-          
           def clean_value(value):
               if value is None:
                   return ""
-          
+
               value = str(value)
-          
+
               # Remove common invisible/control characters that can appear when copying from web pages/editors.
               value = (
                   value
@@ -146,15 +145,14 @@ jobs:
                   .replace("\u2068", "")  # first strong isolate
                   .replace("\u2069", "")  # pop directional isolate
               )
-          
+
               value = value.strip()
-          
+
               if value in {"_No response_", "No response"}:
                   return ""
-          
+
               return value
 
-         
           def extract_field(body, label):
               pattern = rf"###\s+{re.escape(label)}\s*\n+(.*?)(?=\n###\s+|\Z)"
               match = re.search(pattern, body, re.DOTALL | re.IGNORECASE)
@@ -282,7 +280,7 @@ jobs:
               return text.rstrip() + "\n" + block
 
           def remove_list_items_by_identifier(text, section_name, id_key, identifiers):
-              identifiers = [str(x).strip() for x in identifiers if str(x).strip()]
+              identifiers = {str(x).strip() for x in identifiers if str(x).strip()}
 
               if not identifiers:
                   return text
@@ -293,37 +291,61 @@ jobs:
                   return text
 
               section_abs_start, section_abs_end = bounds
+              before_section = text[:section_abs_start]
               section_text = text[section_abs_start:section_abs_end]
+              after_section = text[section_abs_end:]
 
-              item_pattern = re.compile(r"(?ms)^-\s+.*?(?=^-\s+|\Z)")
+              lines = section_text.splitlines(keepends=True)
 
-              kept_parts = []
-              last_pos = 0
+              if not lines:
+                  return text
 
-              for match in item_pattern.finditer(section_text):
-                  item_text = match.group(0)
+              header = lines[0]
+              body_lines = lines[1:]
+
+              items = []
+              current_item = []
+
+              for line in body_lines:
+                  if line.startswith("- "):
+                      if current_item:
+                          items.append(current_item)
+                      current_item = [line]
+                  else:
+                      if current_item:
+                          current_item.append(line)
+                      else:
+                          # Preserve comments/blank lines before first item.
+                          items.append([line])
+
+              if current_item:
+                  items.append(current_item)
+
+              kept_items = []
+
+              for item_lines in items:
+                  item_text = "".join(item_lines)
+
                   should_remove = False
 
                   for identifier in identifiers:
-                      id_pattern = re.compile(
+                      pattern = re.compile(
                           rf"(?m)^\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
                       )
 
-                      if id_pattern.search(item_text):
+                      if pattern.search(item_text):
                           should_remove = True
                           break
 
-                  kept_parts.append(section_text[last_pos:match.start()])
-
                   if not should_remove:
-                      kept_parts.append(item_text)
+                      kept_items.append(item_lines)
 
-                  last_pos = match.end()
+              new_section_text = header + "".join("".join(item) for item in kept_items)
 
-              kept_parts.append(section_text[last_pos:])
-              new_section_text = "".join(kept_parts).rstrip() + "\n"
+              if not new_section_text.endswith("\n"):
+                  new_section_text += "\n"
 
-              return text[:section_abs_start] + new_section_text + text[section_abs_end:]
+              return before_section + new_section_text + after_section
 
           if not CATALOG_PATH.exists():
               fail(f"Could not find {CATALOG_PATH}")
@@ -554,6 +576,8 @@ jobs:
 
           if is_remove_dataset:
               dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              print(f"Remove requested for dataset identifier: {repr(dataset_identifier)}")
+
               dataset_title = extract_field(issue_body, "Dataset title")
               reason = extract_field(issue_body, "Reason for removal")
               remove_distributions_answer = extract_field(issue_body, "Remove linked distributions?")
@@ -648,6 +672,11 @@ jobs:
           except Exception as exc:
               fail(f"Updated YAML is invalid: {exc}")
           PY
+
+      - name: Remove temporary files
+        if: always()
+        run: |
+          rm -f issue.txt validation_errors.md
 
       - name: Comment on validation or update failure
         if: failure()
