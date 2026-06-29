@@ -12,7 +12,7 @@ jobs:
   process-issue:
     runs-on: ubuntu-latest
 
-    if: contains(github.event.issue.title, '[ADD DATASET]')
+    if: contains(toJson(github.event.issue.labels), 'add-dataset')
 
     steps:
       - name: Checkout repo
