@@ -131,19 +131,18 @@ jobs:
 
               value = str(value)
 
-              # Remove common invisible/control characters that can appear when copying from web pages/editors.
               value = (
                   value
-                  .replace("\u200e", "")  # left-to-right mark
-                  .replace("\u200f", "")  # right-to-left mark
-                  .replace("\ufeff", "")  # byte order mark
-                  .replace("\u202a", "")  # left-to-right embedding
-                  .replace("\u202b", "")  # right-to-left embedding
-                  .replace("\u202c", "")  # pop directional formatting
-                  .replace("\u2066", "")  # left-to-right isolate
-                  .replace("\u2067", "")  # right-to-left isolate
-                  .replace("\u2068", "")  # first strong isolate
-                  .replace("\u2069", "")  # pop directional isolate
+                  .replace("\u200e", "")
+                  .replace("\u200f", "")
+                  .replace("\ufeff", "")
+                  .replace("\u202a", "")
+                  .replace("\u202b", "")
+                  .replace("\u202c", "")
+                  .replace("\u2066", "")
+                  .replace("\u2067", "")
+                  .replace("\u2068", "")
+                  .replace("\u2069", "")
               )
 
               value = value.strip()
@@ -303,11 +302,14 @@ jobs:
               header = lines[0]
               body_lines = lines[1:]
 
+              item_start_pattern = re.compile(r"^\s*-\s+")
+
+              preamble = []
               items = []
               current_item = []
 
               for line in body_lines:
-                  if line.startswith("- "):
+                  if item_start_pattern.match(line):
                       if current_item:
                           items.append(current_item)
                       current_item = [line]
@@ -315,8 +317,7 @@ jobs:
                       if current_item:
                           current_item.append(line)
                       else:
-                          # Preserve comments/blank lines before first item.
-                          items.append([line])
+                          preamble.append(line)
 
               if current_item:
                   items.append(current_item)
@@ -329,22 +330,20 @@ jobs:
                   should_remove = False
 
                   for identifier in identifiers:
-                      # Supports both:
-                      # - identifier: ex:test-04
-                      # and:
-                      #   identifier: ex:test-04
-                      pattern = re.compile(
+                      id_pattern = re.compile(
                           rf"(?m)^\s*(?:-\s*)?{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
                       )
 
-                      if pattern.search(item_text):
+                      if id_pattern.search(item_text):
                           should_remove = True
                           break
 
                   if not should_remove:
                       kept_items.append(item_lines)
 
-              new_section_text = header + "".join("".join(item) for item in kept_items)
+              new_section_text = header + "".join(preamble) + "".join(
+                  "".join(item) for item in kept_items
+              )
 
               if not new_section_text.endswith("\n"):
                   new_section_text += "\n"
@@ -582,7 +581,6 @@ jobs:
               dataset_identifier = extract_field(issue_body, "Dataset identifier")
               print(f"Remove requested for dataset identifier: {repr(dataset_identifier)}")
 
-              dataset_title = extract_field(issue_body, "Dataset title")
               reason = extract_field(issue_body, "Reason for removal")
               remove_distributions_answer = extract_field(issue_body, "Remove linked distributions?")
               remove_quality_measurements_answer = extract_field(issue_body, "Remove linked quality measurements?")
