@@ -257,9 +257,35 @@ jobs:
 
               return match.start(), len(text)
 
+          def detect_section_list_indent(text, section_name):
+              bounds = get_section_bounds(text, section_name)
+
+              if not bounds:
+                  return "  "
+
+              section_abs_start, section_abs_end = bounds
+              section_text = text[section_abs_start:section_abs_end]
+
+              for line in section_text.splitlines():
+                  match = re.match(r"^(\s*)-\s+", line)
+                  if match:
+                      return match.group(1)
+
+              return "  "
+
+          def indent_block(block, indent):
+              lines = block.rstrip().splitlines()
+              return "\n".join(
+                  indent + line if line.strip() else line
+                  for line in lines
+              ) + "\n"
+
           def insert_block_into_top_level_section(text, section_name, block):
               header_pattern = re.compile(rf"^{re.escape(section_name)}:\s*$", re.MULTILINE)
               match = header_pattern.search(text)
+
+              item_indent = detect_section_list_indent(text, section_name)
+              block = indent_block(block, item_indent)
 
               if not match:
                   text = text.rstrip() + f"\n{section_name}:\n"
