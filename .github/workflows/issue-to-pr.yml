@@ -328,7 +328,18 @@ jobs:
               header = lines[0]
               body_lines = lines[1:]
 
-              item_start_pattern = re.compile(r"^\s*-\s+")
+              top_item_indent = None
+
+              for line in body_lines:
+                  match = re.match(r"^(\s*)-\s+", line)
+                  if match:
+                      top_item_indent = match.group(1)
+                      break
+
+              if top_item_indent is None:
+                  return text
+
+              item_start_pattern = re.compile(rf"^{re.escape(top_item_indent)}-\s+")
 
               preamble = []
               items = []
@@ -352,15 +363,18 @@ jobs:
 
               for item_lines in items:
                   item_text = "".join(item_lines)
-
                   should_remove = False
 
                   for identifier in identifiers:
                       id_pattern = re.compile(
-                          rf"(?m)^\s*(?:-\s*)?{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
+                          rf"(?m)^{re.escape(top_item_indent)}-\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
                       )
 
-                      if id_pattern.search(item_text):
+                      nested_id_pattern = re.compile(
+                          rf"(?m)^\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
+                      )
+
+                      if id_pattern.search(item_text) or nested_id_pattern.search(item_text):
                           should_remove = True
                           break
 
