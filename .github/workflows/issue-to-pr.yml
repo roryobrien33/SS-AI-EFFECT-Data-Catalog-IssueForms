@@ -1,4 +1,4 @@
-name: Issue to PR (Add Dataset)
+name: Issue Forms to Catalog YAML to PR
 
 on:
   issues:
@@ -10,21 +10,24 @@ permissions:
   issues: write
 
 jobs:
-  process-add-dataset:
+  intake:
+    if: |
+      contains(github.event.issue.labels.*.name, 'add-dataset') ||
+      (
+        contains(github.event.issue.body, '### Dataset identifier') &&
+        contains(github.event.issue.body, '### Dataset title') &&
+        contains(github.event.issue.body, '### Dataset description')
+      )
+
     runs-on: ubuntu-latest
 
-    # Use label only. Debug confirmed:
-    # label condition = true
-    # title condition = false when title is user-entered like "TEST-03"
-    if: contains(toJson(github.event.issue.labels), 'add-dataset')
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -32,118 +35,250 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyyaml
+          pip install ruamel.yaml
 
-      - name: Write issue body to file
-        env:
-          ISSUE_BODY: ${{ github.event.issue.body }}
+      - name: Parse Issue Form fields
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body || "";
+
+            function escapeRegExp(s) {
+              return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            }
+
+            function getField(heading) {
+              const h = escapeRegExp(heading);
+              const re = new RegExp("###\\s+" + h + "\\s*\\n([\\s\\S]*?)(?=\\n###\\s+|$)", "i");
+              const m = body.match(re);
+              if (!m) return "";
+              return m[1].trim().replace(/^_No response_$/i, "").trim();
+            }
+
+            function getLines(heading) {
+              const raw = getField(heading);
+              if (!raw) return [];
+              return raw
+                .split(/\r?\n/)
+                .map(x => x.trim())
+                .filter(Boolean)
+                .filter(x => x !== "-" && x !== "*");
+            }
+
+            function slugify(value) {
+              return String(value || "")
+                .trim()
+                .toLowerCase()
+                .replace(/[\s_]+/g, "-")
+                .replace(/[^a-z0-9-]/g, "-")
+                .replace(/-+/g, "-")
+                .replace(/^-|-$/g, "");
+            }
+
+            function looksLikeDate(value) {
+              if (!value) return true;
+              return /^\d{4}-\d{2}-\d{2}$/.test(value);
+            }
+
+            function looksLikeUrl(value) {
+              if (!value) return true;
+              return value.startsWith("http://") || value.startsWith("https://");
+            }
+
+            const dataset_identifier = getField("Dataset identifier");
+            const dataset_title = getField("Dataset title");
+            const dataset_description = getField("Dataset description");
+            const publisher_name = getField("Publisher name");
+            const dataset_status = getField("Dataset status");
+            const license_value = getField("License title or URL");
+            const dataset_series_identifier = getField("Dataset series identifier");
+            const policy_uid = getField("Policy UID");
+            const theme_identifiers = getLines("Theme / concept identifiers");
+
+            const add_distribution = getField("Add a distribution?");
+            const distribution_identifier = getField("Distribution identifier");
+            const distribution_format = getField("Distribution format");
+            const distribution_access_url = getField("Distribution access URL");
+            const distribution_issued = getField("Distribution issued date");
+
+            const add_quality = getField("Add data quality measurement?");
+            const quality_measurement_identifier = getField("Quality measurement identifier");
+            const metric_identifier = getField("Metric identifier");
+            const quality_measurement_value = getField("Quality measurement value");
+            const quality_measurement_date = getField("Quality measurement generated date");
+
+            const lineage_identifiers = getLines("Source / input dataset identifiers");
+            const notes = getField("Additional notes");
+
+            const errors = [];
+
+            if (!dataset_title) {
+              errors.push("Missing required field: Dataset title.");
+            }
+
+            if (!dataset_description) {
+              errors.push("Missing required field: Dataset description.");
+            }
+
+            if (!publisher_name) {
+              errors.push("Missing required field: Publisher name.");
+            }
+
+            if (!license_value) {
+              errors.push("Missing required field: License title or URL.");
+            }
+
+            if (add_distribution === "Yes") {
+              if (!distribution_format) {
+                errors.push("Distribution format is required when 'Add a distribution?' is Yes.");
+              }
+
+              if (!distribution_access_url) {
+                errors.push("Distribution access URL is required when 'Add a distribution?' is Yes.");
+              }
+
+              if (distribution_access_url && !looksLikeUrl(distribution_access_url)) {
+                errors.push("Distribution access URL must start with http:// or https://.");
+              }
+
+              if (distribution_issued && !looksLikeDate(distribution_issued)) {
+                errors.push("Distribution issued date must use YYYY-MM-DD format.");
+              }
+            }
+
+            if (add_quality === "Yes") {
+              if (!metric_identifier) {
+                errors.push("Metric identifier is required when 'Add data quality measurement?' is Yes.");
+              }
+
+              if (!quality_measurement_value) {
+                errors.push("Quality measurement value is required when 'Add data quality measurement?' is Yes.");
+              }
+
+              if (quality_measurement_value && Number.isNaN(Number(quality_measurement_value))) {
+                errors.push("Quality measurement value must be numeric.");
+              }
+
+              if (quality_measurement_date && !looksLikeDate(quality_measurement_date)) {
+                errors.push("Quality measurement generated date must use YYYY-MM-DD format.");
+              }
+            }
+
+            let normalized_dataset_identifier = dataset_identifier.trim();
+
+            if (!normalized_dataset_identifier && dataset_title) {
+              normalized_dataset_identifier = "ex:" + slugify(dataset_title);
+            }
+
+            core.setOutput("errors", JSON.stringify(errors));
+            core.setOutput("has_errors", errors.length > 0 ? "true" : "false");
+
+            core.setOutput("dataset_identifier", normalized_dataset_identifier);
+            core.setOutput("dataset_title", dataset_title);
+            core.setOutput("dataset_description", dataset_description);
+            core.setOutput("publisher_name", publisher_name);
+            core.setOutput("dataset_status", dataset_status);
+            core.setOutput("license_value", license_value);
+            core.setOutput("dataset_series_identifier", dataset_series_identifier);
+            core.setOutput("policy_uid", policy_uid);
+            core.setOutput("theme_identifiers", JSON.stringify(theme_identifiers));
+
+            core.setOutput("add_distribution", add_distribution);
+            core.setOutput("distribution_identifier", distribution_identifier);
+            core.setOutput("distribution_format", distribution_format);
+            core.setOutput("distribution_access_url", distribution_access_url);
+            core.setOutput("distribution_issued", distribution_issued);
+
+            core.setOutput("add_quality", add_quality);
+            core.setOutput("quality_measurement_identifier", quality_measurement_identifier);
+            core.setOutput("metric_identifier", metric_identifier);
+            core.setOutput("quality_measurement_value", quality_measurement_value);
+            core.setOutput("quality_measurement_date", quality_measurement_date);
+
+            core.setOutput("lineage_identifiers", JSON.stringify(lineage_identifiers));
+            core.setOutput("notes", notes);
+
+      - name: Comment and stop on issue-form validation errors
+        if: steps.parse.outputs.has_errors == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const errors = JSON.parse(`${{ steps.parse.outputs.errors }}`);
+
+            const msg =
+              "Catalog intake validation failed.\n\n" +
+              errors.map(e => "- " + e).join("\n") +
+              "\n\nPlease edit the issue to fix these fields. The workflow will re-run after the issue is edited.";
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: msg
+            });
+
+            core.setFailed("Issue-form validation failed.");
+
+      - name: Update data-catalog.yaml
+        if: steps.parse.outputs.has_errors == 'false'
         run: |
           python - <<'PY'
+          import json
           import os
-          from pathlib import Path
-
-          Path("issue.txt").write_text(
-              os.environ.get("ISSUE_BODY", ""),
-              encoding="utf-8"
-          )
-          PY
-
-      - name: Parse Add Dataset issue and update catalog YAML
-        run: |
-          python - <<'PY'
           import re
           from pathlib import Path
 
-          import yaml
+          from ruamel.yaml import YAML
 
           CATALOG_PATH = Path("data-catalog/data-catalog.yaml")
-          ISSUE_PATH = Path("issue.txt")
 
-          body = ISSUE_PATH.read_text(encoding="utf-8")
+          yaml = YAML()
+          yaml.preserve_quotes = True
+          yaml.indent(mapping=2, sequence=4, offset=2)
+          yaml.width = 1000
 
-          def clean_value(value):
-              if value is None:
-                  return ""
-
-              value = value.strip()
-
-              if value in {"_No response_", "No response"}:
-                  return ""
-
-              return value
-
-          def extract_field(label):
-              """
-              GitHub issue forms render fields like:
-
-              ### Dataset title
-
-              TEST-03
-
-              ### Dataset description
-
-              ...
-              """
-              pattern = rf"###\s+{re.escape(label)}\s*\n+(.*?)(?=\n###\s+|\Z)"
-              match = re.search(pattern, body, re.DOTALL | re.IGNORECASE)
-
-              if not match:
-                  return ""
-
-              return clean_value(match.group(1))
-
-          def extract_lines(label):
-              value = extract_field(label)
-
-              if not value:
-                  return []
-
-              return [
-                  line.strip()
-                  for line in value.splitlines()
-                  if line.strip() and line.strip() not in {"-", "*"}
-              ]
+          def clean(value):
+              return str(value or "").strip()
 
           def slugify(value):
-              value = value.lower().strip()
-              value = re.sub(r"[^a-z0-9]+", "-", value)
-              value = re.sub(r"-+", "-", value).strip("-")
-              return value or "dataset"
+              s = clean(value).lower()
+              s = re.sub(r"[^a-z0-9]+", "-", s)
+              s = re.sub(r"-+", "-", s).strip("-")
+              return s or "dataset"
 
           def ensure_list_section(catalog, key):
               if key not in catalog or catalog[key] is None:
                   catalog[key] = []
 
               if not isinstance(catalog[key], list):
-                  raise ValueError(f"Expected top-level '{key}' to be a list.")
+                  raise SystemExit(f"Expected top-level '{key}' to be a list.")
 
               return catalog[key]
 
           def identifiers_in(section, id_key="identifier"):
               return {
-                  str(item.get(id_key)).strip()
+                  clean(item.get(id_key))
                   for item in section
-                  if isinstance(item, dict) and item.get(id_key)
+                  if isinstance(item, dict) and clean(item.get(id_key))
               }
 
           def require_existing(reference, existing_ids, field_name):
               if reference and reference not in existing_ids:
-                  raise ValueError(
-                      f"{field_name} references missing identifier: {reference}"
-                  )
+                  raise SystemExit(f"{field_name} references missing identifier: {reference}")
 
           def require_all_existing(references, existing_ids, field_name):
               missing = [ref for ref in references if ref not in existing_ids]
-
               if missing:
-                  raise ValueError(
+                  raise SystemExit(
                       f"{field_name} references missing identifiers: {', '.join(missing)}"
                   )
 
           if not CATALOG_PATH.exists():
-              raise FileNotFoundError(f"Could not find {CATALOG_PATH}")
+              raise SystemExit(f"Could not find {CATALOG_PATH}")
 
-          catalog = yaml.safe_load(CATALOG_PATH.read_text(encoding="utf-8")) or {}
+          with CATALOG_PATH.open("r", encoding="utf-8") as handle:
+              catalog = yaml.load(handle) or {}
 
           datasets = ensure_list_section(catalog, "datasets")
           concepts = ensure_list_section(catalog, "concepts")
@@ -158,110 +293,86 @@ jobs:
           series_ids = identifiers_in(series, "identifier")
           distribution_ids = identifiers_in(distributions, "identifier")
           metric_ids = identifiers_in(metrics, "identifier")
-          qm_ids = identifiers_in(quality_measurements, "identifier")
+          quality_measurement_ids = identifiers_in(quality_measurements, "identifier")
           policy_uids = identifiers_in(policies, "uid")
 
-          identifier = extract_field("Dataset identifier")
-          title = extract_field("Dataset title")
-          description = extract_field("Dataset description")
-          publisher = extract_field("Publisher name")
-          status = extract_field("Dataset status")
-          license_value = extract_field("License title or URL")
-          in_series = extract_field("Dataset series identifier")
-          policy_uid = extract_field("Policy UID")
-          themes = extract_lines("Theme / concept identifiers")
-          lineage = extract_lines("Source / input dataset identifiers")
+          dataset_identifier = clean(os.environ["DATASET_IDENTIFIER"])
+          dataset_title = clean(os.environ["DATASET_TITLE"])
+          dataset_description = clean(os.environ["DATASET_DESCRIPTION"])
+          publisher_name = clean(os.environ["PUBLISHER_NAME"])
+          dataset_status = clean(os.environ["DATASET_STATUS"])
+          license_value = clean(os.environ["LICENSE_VALUE"])
+          dataset_series_identifier = clean(os.environ["DATASET_SERIES_IDENTIFIER"])
+          policy_uid = clean(os.environ["POLICY_UID"])
+          theme_identifiers = json.loads(os.environ.get("THEME_IDENTIFIERS", "[]"))
+          lineage_identifiers = json.loads(os.environ.get("LINEAGE_IDENTIFIERS", "[]"))
 
-          add_distribution = extract_field("Add a distribution?")
-          distribution_identifier = extract_field("Distribution identifier")
-          distribution_format = extract_field("Distribution format")
-          distribution_url = extract_field("Distribution access URL")
-          distribution_issued = extract_field("Distribution issued date")
+          add_distribution = clean(os.environ["ADD_DISTRIBUTION"])
+          distribution_identifier = clean(os.environ["DISTRIBUTION_IDENTIFIER"])
+          distribution_format = clean(os.environ["DISTRIBUTION_FORMAT"])
+          distribution_access_url = clean(os.environ["DISTRIBUTION_ACCESS_URL"])
+          distribution_issued = clean(os.environ["DISTRIBUTION_ISSUED"])
 
-          add_quality = extract_field("Add data quality measurement?")
-          qm_identifier = extract_field("Quality measurement identifier")
-          metric_identifier = extract_field("Metric identifier")
-          qm_value = extract_field("Quality measurement value")
-          qm_date = extract_field("Quality measurement generated date")
+          add_quality = clean(os.environ["ADD_QUALITY"])
+          quality_measurement_identifier = clean(os.environ["QUALITY_MEASUREMENT_IDENTIFIER"])
+          metric_identifier = clean(os.environ["METRIC_IDENTIFIER"])
+          quality_measurement_value = clean(os.environ["QUALITY_MEASUREMENT_VALUE"])
+          quality_measurement_date = clean(os.environ["QUALITY_MEASUREMENT_DATE"])
 
-          if not title:
-              raise ValueError("Dataset title is required.")
+          if not dataset_identifier:
+              dataset_identifier = "ex:" + slugify(dataset_title)
 
-          if not description:
-              raise ValueError("Dataset description is required.")
-
-          if not publisher:
-              raise ValueError("Publisher name is required.")
-
-          if not license_value:
-              raise ValueError("License title or URL is required.")
-
-          if not identifier:
-              identifier = f"ex:{slugify(title)}"
-
-          if identifier in dataset_ids:
-              raise ValueError(
-                  f"Dataset identifier already exists: {identifier}. "
+          if dataset_identifier in dataset_ids:
+              raise SystemExit(
+                  f"Dataset identifier already exists: {dataset_identifier}. "
                   "Use the Edit Dataset form instead."
               )
 
-          require_all_existing(themes, concept_ids, "Theme / concept identifiers")
-          require_existing(in_series, series_ids, "Dataset series identifier")
+          require_all_existing(theme_identifiers, concept_ids, "Theme / concept identifiers")
+          require_existing(dataset_series_identifier, series_ids, "Dataset series identifier")
           require_existing(policy_uid, policy_uids, "Policy UID")
-          require_all_existing(lineage, dataset_ids, "Source / input dataset identifiers")
+          require_all_existing(lineage_identifiers, dataset_ids, "Source / input dataset identifiers")
 
           dataset = {
-              "identifier": identifier,
-              "title": title,
-              "description": description,
+              "identifier": dataset_identifier,
+              "title": dataset_title,
+              "description": dataset_description,
               "publisher": {
-                  "name": publisher
+                  "name": publisher_name
               },
               "license": {
                   "title": license_value
               },
           }
 
-          if status:
-              dataset["status"] = status
+          if dataset_status:
+              dataset["status"] = dataset_status
 
-          if in_series:
-              dataset["inSeries"] = in_series
+          if dataset_series_identifier:
+              dataset["inSeries"] = dataset_series_identifier
 
           if policy_uid:
               dataset["hasPolicy"] = policy_uid
 
-          if themes:
-              dataset["theme"] = themes
+          if theme_identifiers:
+              dataset["theme"] = theme_identifiers
 
-          if lineage:
-              dataset["wasDerivedFrom"] = lineage
+          if lineage_identifiers:
+              dataset["wasDerivedFrom"] = lineage_identifiers
 
           if add_distribution == "Yes":
               if not distribution_identifier:
-                  distribution_identifier = f"{identifier}-distribution"
+                  distribution_identifier = f"{dataset_identifier}-distribution"
 
               if distribution_identifier in distribution_ids:
-                  raise ValueError(
-                      f"Distribution identifier already exists: {distribution_identifier}"
-                  )
-
-              if not distribution_format:
-                  raise ValueError(
-                      "Distribution format is required when 'Add a distribution?' is Yes."
-                  )
-
-              if not distribution_url:
-                  raise ValueError(
-                      "Distribution access URL is required when 'Add a distribution?' is Yes."
-                  )
+                  raise SystemExit(f"Distribution identifier already exists: {distribution_identifier}")
 
               dataset["distribution"] = [distribution_identifier]
 
               distribution = {
                   "identifier": distribution_identifier,
                   "format": distribution_format,
-                  "accessURL": distribution_url,
+                  "accessURL": distribution_access_url,
               }
 
               if distribution_issued:
@@ -270,97 +381,82 @@ jobs:
               distributions.append(distribution)
 
           if add_quality == "Yes":
-              if not metric_identifier:
-                  raise ValueError(
-                      "Metric identifier is required when 'Add data quality measurement?' is Yes."
-                  )
-
               require_existing(metric_identifier, metric_ids, "Metric identifier")
 
-              if not qm_value:
-                  raise ValueError(
-                      "Quality measurement value is required when 'Add data quality measurement?' is Yes."
-                  )
+              if not quality_measurement_identifier:
+                  quality_measurement_identifier = f"{dataset_identifier}-quality-measurement"
 
-              try:
-                  qm_value_float = float(qm_value)
-              except ValueError as exc:
-                  raise ValueError(
-                      f"Quality measurement value must be numeric. Received: {qm_value}"
-                  ) from exc
-
-              if not qm_identifier:
-                  qm_identifier = f"{identifier}-quality-measurement"
-
-              if qm_identifier in qm_ids:
-                  raise ValueError(
-                      f"Quality measurement identifier already exists: {qm_identifier}"
+              if quality_measurement_identifier in quality_measurement_ids:
+                  raise SystemExit(
+                      f"Quality measurement identifier already exists: {quality_measurement_identifier}"
                   )
 
               quality_measurement = {
-                  "identifier": qm_identifier,
-                  "computedOn": identifier,
+                  "identifier": quality_measurement_identifier,
+                  "computedOn": dataset_identifier,
                   "isMeasurementOf": metric_identifier,
-                  "value": qm_value_float,
+                  "value": float(quality_measurement_value),
               }
 
-              if qm_date:
-                  quality_measurement["generatedAtTime"] = qm_date
+              if quality_measurement_date:
+                  quality_measurement["generatedAtTime"] = quality_measurement_date
 
               quality_measurements.append(quality_measurement)
 
           datasets.append(dataset)
 
-          CATALOG_PATH.write_text(
-              yaml.safe_dump(
-                  catalog,
-                  sort_keys=False,
-                  allow_unicode=True,
-                  width=1000,
-              ),
-              encoding="utf-8",
-          )
+          with CATALOG_PATH.open("w", encoding="utf-8") as handle:
+              yaml.dump(catalog, handle)
 
-          print(f"Added dataset: {identifier}")
+          print(f"Added dataset: {dataset_identifier}")
           PY
-
-      - name: Create branch and commit changes
-        id: commit_changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-
-          BRANCH="add-dataset-issue-${{ github.event.issue.number }}"
-
-          git checkout -B "$BRANCH"
-
-          git add data-catalog/data-catalog.yaml
-
-          if git diff --cached --quiet; then
-            echo "No changes detected."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "branch_name=$BRANCH" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          git commit -m "Add dataset from issue #${{ github.event.issue.number }}"
-          git push --force-with-lease origin "$BRANCH"
-
-          echo "changed=true" >> "$GITHUB_OUTPUT"
-          echo "branch_name=$BRANCH" >> "$GITHUB_OUTPUT"
-
-      - name: Create pull request
-        if: steps.commit_changes.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
-          BRANCH_NAME: ${{ steps.commit_changes.outputs.branch_name }}
+          DATASET_IDENTIFIER: ${{ steps.parse.outputs.dataset_identifier }}
+          DATASET_TITLE: ${{ steps.parse.outputs.dataset_title }}
+          DATASET_DESCRIPTION: ${{ steps.parse.outputs.dataset_description }}
+          PUBLISHER_NAME: ${{ steps.parse.outputs.publisher_name }}
+          DATASET_STATUS: ${{ steps.parse.outputs.dataset_status }}
+          LICENSE_VALUE: ${{ steps.parse.outputs.license_value }}
+          DATASET_SERIES_IDENTIFIER: ${{ steps.parse.outputs.dataset_series_identifier }}
+          POLICY_UID: ${{ steps.parse.outputs.policy_uid }}
+          THEME_IDENTIFIERS: ${{ steps.parse.outputs.theme_identifiers }}
+          LINEAGE_IDENTIFIERS: ${{ steps.parse.outputs.lineage_identifiers }}
+          ADD_DISTRIBUTION: ${{ steps.parse.outputs.add_distribution }}
+          DISTRIBUTION_IDENTIFIER: ${{ steps.parse.outputs.distribution_identifier }}
+          DISTRIBUTION_FORMAT: ${{ steps.parse.outputs.distribution_format }}
+          DISTRIBUTION_ACCESS_URL: ${{ steps.parse.outputs.distribution_access_url }}
+          DISTRIBUTION_ISSUED: ${{ steps.parse.outputs.distribution_issued }}
+          ADD_QUALITY: ${{ steps.parse.outputs.add_quality }}
+          QUALITY_MEASUREMENT_IDENTIFIER: ${{ steps.parse.outputs.quality_measurement_identifier }}
+          METRIC_IDENTIFIER: ${{ steps.parse.outputs.metric_identifier }}
+          QUALITY_MEASUREMENT_VALUE: ${{ steps.parse.outputs.quality_measurement_value }}
+          QUALITY_MEASUREMENT_DATE: ${{ steps.parse.outputs.quality_measurement_date }}
+
+      - name: Show pending changes
+        if: success()
         run: |
-          if gh pr view "$BRANCH_NAME" --json url --jq '.url'; then
-            echo "Pull request already exists for $BRANCH_NAME"
-          else
-            gh pr create \
-              --base main \
-              --head "$BRANCH_NAME" \
-              --title "Add dataset from issue #${{ github.event.issue.number }}" \
-              --body "Automated PR created from Add Dataset issue #${{ github.event.issue.number }}."
-          fi
+          echo "=== git status --short --untracked-files=all ==="
+          git status --short --untracked-files=all
+          echo ""
+          echo "=== git diff -- data-catalog/data-catalog.yaml ==="
+          git diff -- data-catalog/data-catalog.yaml
+
+      - name: Create Pull Request
+        if: success()
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          add-paths: |
+            data-catalog/data-catalog.yaml
+          commit-message: "Catalog intake: issue #${{ github.event.issue.number }}"
+          branch: "catalog-intake/${{ github.event.issue.number }}"
+          delete-branch: true
+          title: "Catalog intake: issue #${{ github.event.issue.number }}"
+          body: |
+            This PR was automatically generated from issue #${{ github.event.issue.number }}.
+
+            - Labels: `${{ join(github.event.issue.labels.*.name, ', ') }}`
+            - Dataset ID: `${{ steps.parse.outputs.dataset_identifier }}`
+
+            After merge to `main`, the Pages deployment workflow will rebuild and publish the static catalog site.
+          labels: "catalog-intake-pr"
