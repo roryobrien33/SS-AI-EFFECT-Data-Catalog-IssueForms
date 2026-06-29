@@ -360,7 +360,6 @@ datasets:
       - ex:energy-community
       - ex:energy
       - ex:validation-data
-      - ex:energy-community
       - ex:energy
   - identifier: ex:uc4-ai-system
     title: AI System for UC4
