@@ -421,7 +421,16 @@ datasets:
     status: None
     distribution:
       - ex:test-o5-distribution
-
+  - identifier: ex:test-final-b
+    title: Test Final B
+    description: NA
+    publisher:
+      name: EPRI
+    license:
+      title: TBD
+    status: draft
+    distribution:
+    - ex:test-final-b-distribution
 concepts:
   - prefLabel: energy
     identifier: ex:energy
@@ -743,3 +752,6 @@ distributions:
   - identifier: ex:test-o5-distribution
     format: csv
     accessURL: https://example.com/test.csv
+  - identifier: ex:test-final-b-distribution
+    format: csv
+    accessURL: https://example.com/data.csv
