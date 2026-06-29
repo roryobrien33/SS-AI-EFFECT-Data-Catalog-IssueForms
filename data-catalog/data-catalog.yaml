@@ -374,15 +374,6 @@ datasets:
       - ex:ai-system
       - ex:energy-community
       - ex:energy
-  - identifier: ex:test-04
-    title: TEST-04
-    description: THIS IS A TEST
-    publisher:
-      name: EPRI
-    license:
-      title: TBD
-    status: draft
-    distribution:
       - ex:test-04-distribution
   - identifier: ex:test-o5
     title: TEST-O5
@@ -620,9 +611,6 @@ policies:
         assignee:
           - Data Provider
 distributions:
-  - identifier: ex:test-04-distribution
-    format: csv
-    accessURL: https://test.com/data.csv
   - identifier: ex:test-o5-distribution
     format: csv
     accessURL: https://example.com/test.csv
