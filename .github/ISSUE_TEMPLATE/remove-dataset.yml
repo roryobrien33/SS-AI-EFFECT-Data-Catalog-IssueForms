@@ -1,0 +1,86 @@
+name: Remove Dataset
+description: Submit a request to remove an existing dataset from the AI-EFFECT data catalog
+title: "[REMOVE DATASET] "
+labels:
+  - remove-dataset
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Remove Dataset
+
+        Use this form to request removal of an existing dataset from the AI-EFFECT data catalog.
+
+        This form removes data from the existing catalog source file:
+
+        `data-catalog/data-catalog.yaml`
+
+        If the dataset has linked distributions or data quality measurements, those must be explicitly removed too. Otherwise the workflow will stop to avoid leaving broken references.
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Dataset identifier
+      description: Existing dataset identifier to remove.
+      placeholder: ex:test-04
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Dataset title
+      description: Optional human-readable title, used only for reviewer confirmation.
+      placeholder: TEST-04
+    validations:
+      required: false
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for removal
+      description: Explain why this dataset should be removed.
+      placeholder: This dataset was added for testing and should now be removed.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: remove_distributions
+    attributes:
+      label: Remove linked distributions?
+      description: Select Yes if distributions linked from this dataset should also be removed.
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: remove_quality_measurements
+    attributes:
+      label: Remove linked quality measurements?
+      description: Select Yes if quality measurements computed on this dataset should also be removed.
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+
+  - type: input
+    id: confirmation
+    attributes:
+      label: Removal confirmation
+      description: Type REMOVE to confirm this removal request.
+      placeholder: REMOVE
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
