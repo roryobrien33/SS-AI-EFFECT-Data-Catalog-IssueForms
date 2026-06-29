@@ -329,8 +329,12 @@ jobs:
                   should_remove = False
 
                   for identifier in identifiers:
+                      # Supports both:
+                      # - identifier: ex:test-04
+                      # and:
+                      #   identifier: ex:test-04
                       pattern = re.compile(
-                          rf"(?m)^\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
+                          rf"(?m)^\s*(?:-\s*)?{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
                       )
 
                       if pattern.search(item_text):
@@ -673,11 +677,6 @@ jobs:
               fail(f"Updated YAML is invalid: {exc}")
           PY
 
-      - name: Remove temporary files
-        if: always()
-        run: |
-          rm -f issue.txt validation_errors.md
-
       - name: Comment on validation or update failure
         if: failure()
         uses: actions/github-script@v7
@@ -697,6 +696,11 @@ jobs:
               issue_number: context.payload.issue.number,
               body
             });
+
+      - name: Remove temporary files
+        if: always()
+        run: |
+          rm -f issue.txt validation_errors.md
 
       - name: Show pending changes
         if: success()
