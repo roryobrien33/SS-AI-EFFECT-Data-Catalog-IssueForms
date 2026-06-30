@@ -511,7 +511,11 @@ metrics:
     definition: an example of a data quality metric
     expectedDataType: xsd:float
     inDimension: Completeness
-
+  - identifier: ex:completeness-score
+    prefLabel: completeness-score
+    definition: A metric measuring the data completeness of the dataset.
+    expectedDataType: xsd:float
+    inDimension: Completeness
 qualityMeasurements:
   - identifier: ex:sfasdggfvrln
     computedOn: ex:herrcgre
