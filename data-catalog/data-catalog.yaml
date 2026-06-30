@@ -471,10 +471,6 @@ concepts:
   - prefLabel: energy community
     identifier: ex:energy-community
     definition: Local energy communities
-  - prefLabel: forecast data
-    identifier: ex:forecast-data
-    definition: Dataset containing forecasted energy demand, generation, or grid state information.
-    altLabel: prediction data
 series:
   - identifier: ex:uc1-multi-energy-sector-coupling
     title: UC1 - Multi Energy and Sector Coupling
