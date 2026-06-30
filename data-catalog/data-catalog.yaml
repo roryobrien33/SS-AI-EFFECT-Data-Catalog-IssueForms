@@ -473,7 +473,7 @@ concepts:
     definition: Local energy communities
   - prefLabel: forecast data
     identifier: ex:forecast-data
-    definition: "concepts:\n  - identifier: ex:training-data\n    prefLabel: training data\n    definition: Dataset used for training AI models"
+    definition: Dataset containing forecasted energy demand, generation, or grid state information.
     altLabel: prediction data
 series:
   - identifier: ex:uc1-multi-energy-sector-coupling
