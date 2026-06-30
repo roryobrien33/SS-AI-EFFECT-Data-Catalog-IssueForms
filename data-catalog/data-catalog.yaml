@@ -410,6 +410,16 @@ datasets:
       - ex:ai-system
       - ex:energy-community
       - ex:energy
+  - identifier: ex:test-d
+    title: Test-D
+    description: Testing testing
+    publisher:
+      name: EPRI
+    license:
+      title: TBD
+    status: None
+    distribution:
+    - ex:test-d-distribution
 concepts:
   - prefLabel: energy
     identifier: ex:energy
@@ -728,3 +738,6 @@ policies:
           - Data Provider
 
 distributions:
+  - identifier: ex:test-d-distribution
+    format: csv
+    accessURL: https://example.com/data.csv
