@@ -1,0 +1,62 @@
+name: Remove Metric
+description: Submit a request to remove an existing data quality metric from the AI-EFFECT data catalog
+title: "[REMOVE METRIC] "
+labels:
+  - remove-metric
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Remove Metric
+
+        Use this form to request removal of an existing data quality metric from the AI-EFFECT data catalog.
+
+        The workflow will block removal if the metric is still referenced by one or more data quality measurements.
+
+        Before removing a metric, remove or replace all quality measurements that reference it using `isMeasurementOf`.
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Metric identifier
+      description: Existing metric identifier to remove.
+      placeholder: ex:completeness-score
+    validations:
+      required: true
+
+  - type: input
+    id: pref_label
+    attributes:
+      label: Metric preferred label
+      description: Optional human-readable label, used only for reviewer confirmation.
+      placeholder: completeness score
+    validations:
+      required: false
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for removal
+      description: Explain why this metric should be removed.
+      placeholder: This metric was added in error or is no longer needed.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm metric removal
+      description: Confirm that this metric should be removed from the catalog.
+      options:
+        - label: I confirm that this metric should be removed from the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
