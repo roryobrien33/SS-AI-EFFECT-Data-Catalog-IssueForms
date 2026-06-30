@@ -471,7 +471,10 @@ concepts:
   - prefLabel: energy community
     identifier: ex:energy-community
     definition: Local energy communities
-
+  - prefLabel: forecast data
+    identifier: ex:forecast-data
+    definition: "concepts:\n  - identifier: ex:training-data\n    prefLabel: training data\n    definition: Dataset used for training AI models"
+    altLabel: prediction data
 series:
   - identifier: ex:uc1-multi-energy-sector-coupling
     title: UC1 - Multi Energy and Sector Coupling
