@@ -2,7 +2,7 @@ name: Issue Forms to Catalog YAML to PR
 
 on:
   issues:
-    types: [opened, edited, reopened, labeled]
+    types: [opened, edited, reopened]
 
 permissions:
   contents: write
@@ -10,52 +10,6 @@ permissions:
   issues: write
 
 jobs:
-  debug-issue-event:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Print issue event debug information
-        run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Event name: ${{ github.event_name }}"
-          echo "Issue action: ${{ github.event.action }}"
-          echo "Issue number: ${{ github.event.issue.number }}"
-          echo ""
-          echo "Issue title:"
-          echo "${{ github.event.issue.title }}"
-          echo ""
-          echo "Issue labels JSON:"
-          echo '${{ toJson(github.event.issue.labels) }}'
-          echo ""
-          echo "Condition check - has add-dataset label:"
-          echo "${{ contains(github.event.issue.labels.*.name, 'add-dataset') }}"
-          echo ""
-          echo "Condition check - has remove-dataset label:"
-          echo "${{ contains(github.event.issue.labels.*.name, 'remove-dataset') }}"
-          echo ""
-          echo "Condition check - has edit-dataset label:"
-          echo "${{ contains(github.event.issue.labels.*.name, 'edit-dataset') }}"
-          echo ""
-          echo "Body marker check - has Dataset identifier:"
-          echo "${{ contains(github.event.issue.body, '### Dataset identifier') }}"
-          echo ""
-          echo "Body marker check - has Dataset title:"
-          echo "${{ contains(github.event.issue.body, '### Dataset title') }}"
-          echo ""
-          echo "Body marker check - has Reason for removal:"
-          echo "${{ contains(github.event.issue.body, '### Reason for removal') }}"
-          echo ""
-          echo "Body marker check - has Confirm dataset removal:"
-          echo "${{ contains(github.event.issue.body, '### Confirm dataset removal') }}"
-          echo ""
-          echo "Body marker check - has Confirm dataset edit:"
-          echo "${{ contains(github.event.issue.body, '### Confirm dataset edit') }}"
-          echo ""
-          echo "Full issue body:"
-          cat <<'EOF'
-          ${{ github.event.issue.body }}
-          EOF
-
   intake:
     if: |
       contains(github.event.issue.labels.*.name, 'add-dataset') ||
