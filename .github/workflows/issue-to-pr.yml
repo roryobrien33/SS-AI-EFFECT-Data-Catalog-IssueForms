@@ -16,6 +16,7 @@ jobs:
       contains(github.event.issue.labels.*.name, 'remove-dataset') ||
       contains(github.event.issue.labels.*.name, 'edit-dataset') ||
       contains(github.event.issue.labels.*.name, 'add-concept') ||
+      contains(github.event.issue.labels.*.name, 'remove-concept') ||
       (
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Dataset title') &&
@@ -34,6 +35,11 @@ jobs:
         contains(github.event.issue.body, '### Preferred label') &&
         contains(github.event.issue.body, '### Concept definition') &&
         contains(github.event.issue.body, '### Confirm concept addition')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Concept identifier') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm concept removal')
       )
 
     runs-on: ubuntu-latest
@@ -74,6 +80,7 @@ jobs:
           IS_REMOVE_DATASET: ${{ contains(github.event.issue.labels.*.name, 'remove-dataset') }}
           IS_EDIT_DATASET: ${{ contains(github.event.issue.labels.*.name, 'edit-dataset') }}
           IS_ADD_CONCEPT: ${{ contains(github.event.issue.labels.*.name, 'add-concept') }}
+          IS_REMOVE_CONCEPT: ${{ contains(github.event.issue.labels.*.name, 'remove-concept') }}
         run: |
           python - <<'PY'
           import copy
@@ -482,8 +489,9 @@ jobs:
           is_remove_dataset = str(os.environ.get("IS_REMOVE_DATASET", "")).lower() == "true"
           is_edit_dataset = str(os.environ.get("IS_EDIT_DATASET", "")).lower() == "true"
           is_add_concept = str(os.environ.get("IS_ADD_CONCEPT", "")).lower() == "true"
+          is_remove_concept = str(os.environ.get("IS_REMOVE_CONCEPT", "")).lower() == "true"
 
-          if not is_add_dataset and not is_remove_dataset and not is_edit_dataset and not is_add_concept:
+          if not is_add_dataset and not is_remove_dataset and not is_edit_dataset and not is_add_concept and not is_remove_concept:
               if "### Dataset title" in issue_body and "### Dataset description" in issue_body:
                   is_add_dataset = True
               elif "### Confirm dataset removal" in issue_body and "### Reason for removal" in issue_body:
@@ -492,8 +500,16 @@ jobs:
                   is_edit_dataset = True
               elif "### Confirm concept addition" in issue_body and "### Preferred label" in issue_body:
                   is_add_concept = True
+              elif "### Confirm concept removal" in issue_body and "### Concept identifier" in issue_body:
+                  is_remove_concept = True
 
-          active_modes = [is_add_dataset, is_remove_dataset, is_edit_dataset, is_add_concept]
+          active_modes = [
+              is_add_dataset,
+              is_remove_dataset,
+              is_edit_dataset,
+              is_add_concept,
+              is_remove_concept,
+          ]
 
           if sum(1 for mode in active_modes if mode) > 1:
               fail("Issue appears to match more than one supported intake form. Check labels.")
@@ -899,6 +915,9 @@ jobs:
               if "I confirm that this concept should be added to the catalog." not in confirmation:
                   errors.append("You must confirm concept addition by ticking the confirmation checkbox.")
 
+              if any(marker in definition for marker in ["identifier:", "prefLabel:", "concepts:", "datasets:"]):
+                  errors.append("Concept definition must be plain text, not YAML. Do not paste a YAML example into the definition field.")
+
               if pref_label and not concept_identifier:
                   concept_identifier = f"ex:{slugify(pref_label)}"
 
@@ -924,6 +943,68 @@ jobs:
               catalog_text = insert_block_into_top_level_section(catalog_text, "concepts", concept_block)
 
               print(f"Added concept: {concept_identifier}")
+
+          if is_remove_concept:
+              concept_identifier = extract_field(issue_body, "Concept identifier")
+              pref_label = extract_field(issue_body, "Concept preferred label")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm concept removal")
+
+              errors = []
+
+              if not concept_identifier:
+                  errors.append("Missing required field: Concept identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this concept should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm concept removal by ticking the confirmation checkbox.")
+
+              target_concept = None
+
+              for concept in concepts:
+                  if isinstance(concept, dict) and str(concept.get("identifier", "")).strip() == concept_identifier:
+                      target_concept = concept
+                      break
+
+              if target_concept is None:
+                  errors.append(f"Concept identifier not found: {concept_identifier}")
+
+              referencing_datasets = []
+
+              for dataset in datasets:
+                  if not isinstance(dataset, dict):
+                      continue
+
+                  dataset_identifier = str(dataset.get("identifier", "")).strip()
+                  dataset_title = str(dataset.get("title", "")).strip()
+                  dataset_themes = as_list(dataset.get("theme"))
+
+                  if concept_identifier in dataset_themes:
+                      if dataset_title:
+                          referencing_datasets.append(f"{dataset_identifier} ({dataset_title})")
+                      else:
+                          referencing_datasets.append(dataset_identifier)
+
+              if referencing_datasets:
+                  errors.append(
+                      "Concept cannot be removed because it is still referenced by dataset theme lists: "
+                      + ", ".join(referencing_datasets)
+                      + ". Remove or replace this concept from those datasets first using the Edit Dataset form."
+                  )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "concepts",
+                  "identifier",
+                  [concept_identifier]
+              )
+
+              print(f"Removed concept: {concept_identifier}")
 
           CATALOG_PATH.write_text(catalog_text, encoding="utf-8")
 
