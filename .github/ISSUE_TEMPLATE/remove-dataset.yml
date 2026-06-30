@@ -67,14 +67,14 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: checkboxes
     id: confirmation
     attributes:
-      label: Removal confirmation
-      description: Type REMOVE to confirm this removal request.
-      placeholder: REMOVE
-    validations:
-      required: true
+      label: Confirm dataset removal
+      description: Confirm that this dataset should be removed from the catalog.
+      options:
+        - label: I confirm that this dataset should be removed from the catalog.
+          required: true
 
   - type: textarea
     id: notes
