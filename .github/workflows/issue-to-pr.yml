@@ -10,7 +10,7 @@ permissions:
   issues: write
 
 jobs:
-  debug-remove-dataset-event:
+  debug-issue-event:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,14 +33,23 @@ jobs:
           echo "Condition check - has remove-dataset label:"
           echo "${{ contains(github.event.issue.labels.*.name, 'remove-dataset') }}"
           echo ""
+          echo "Condition check - has edit-dataset label:"
+          echo "${{ contains(github.event.issue.labels.*.name, 'edit-dataset') }}"
+          echo ""
           echo "Body marker check - has Dataset identifier:"
           echo "${{ contains(github.event.issue.body, '### Dataset identifier') }}"
+          echo ""
+          echo "Body marker check - has Dataset title:"
+          echo "${{ contains(github.event.issue.body, '### Dataset title') }}"
           echo ""
           echo "Body marker check - has Reason for removal:"
           echo "${{ contains(github.event.issue.body, '### Reason for removal') }}"
           echo ""
           echo "Body marker check - has Confirm dataset removal:"
           echo "${{ contains(github.event.issue.body, '### Confirm dataset removal') }}"
+          echo ""
+          echo "Body marker check - has Confirm dataset edit:"
+          echo "${{ contains(github.event.issue.body, '### Confirm dataset edit') }}"
           echo ""
           echo "Full issue body:"
           cat <<'EOF'
@@ -51,6 +60,7 @@ jobs:
     if: |
       contains(github.event.issue.labels.*.name, 'add-dataset') ||
       contains(github.event.issue.labels.*.name, 'remove-dataset') ||
+      contains(github.event.issue.labels.*.name, 'edit-dataset') ||
       (
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Dataset title') &&
@@ -60,6 +70,10 @@ jobs:
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Reason for removal') &&
         contains(github.event.issue.body, '### Confirm dataset removal')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Dataset identifier') &&
+        contains(github.event.issue.body, '### Confirm dataset edit')
       )
 
     runs-on: ubuntu-latest
@@ -98,8 +112,10 @@ jobs:
         env:
           IS_ADD_DATASET: ${{ contains(github.event.issue.labels.*.name, 'add-dataset') }}
           IS_REMOVE_DATASET: ${{ contains(github.event.issue.labels.*.name, 'remove-dataset') }}
+          IS_EDIT_DATASET: ${{ contains(github.event.issue.labels.*.name, 'edit-dataset') }}
         run: |
           python - <<'PY'
+          import copy
           import os
           import re
           import sys
@@ -110,6 +126,7 @@ jobs:
           CATALOG_PATH = Path("data-catalog/data-catalog.yaml")
           ISSUE_PATH = Path("issue.txt")
           ERROR_PATH = Path("validation_errors.md")
+
 
           def fail(errors):
               if isinstance(errors, str):
@@ -124,6 +141,7 @@ jobs:
               ERROR_PATH.write_text(msg, encoding="utf-8")
               print(msg)
               sys.exit(1)
+
 
           def clean_value(value):
               if value is None:
@@ -152,6 +170,7 @@ jobs:
 
               return value
 
+
           def extract_field(body, label):
               pattern = rf"###\s+{re.escape(label)}\s*\n+(.*?)(?=\n###\s+|\Z)"
               match = re.search(pattern, body, re.DOTALL | re.IGNORECASE)
@@ -161,6 +180,7 @@ jobs:
 
               return clean_value(match.group(1))
 
+
           def extract_lines(body, label):
               value = extract_field(body, label)
 
@@ -168,10 +188,11 @@ jobs:
                   return []
 
               return [
-                  line.strip()
+                  clean_value(line)
                   for line in value.splitlines()
-                  if line.strip() and line.strip() not in {"-", "*"}
+                  if clean_value(line) and clean_value(line) not in {"-", "*"}
               ]
+
 
           def slugify(value):
               value = str(value or "").lower().strip()
@@ -179,18 +200,22 @@ jobs:
               value = re.sub(r"-+", "-", value).strip("-")
               return value or "dataset"
 
+
           def is_yes(value):
               return str(value or "").strip().lower() == "yes"
+
 
           def looks_like_url(value):
               if not value:
                   return True
               return value.startswith("http://") or value.startswith("https://")
 
+
           def looks_like_date(value):
               if not value:
                   return True
               return bool(re.match(r"^\d{4}-\d{2}-\d{2}$", value))
+
 
           def ensure_list_section(catalog, key):
               section = catalog.get(key, [])
@@ -203,12 +228,14 @@ jobs:
 
               return section
 
+
           def identifiers_in(section, id_key="identifier"):
               return {
                   str(item.get(id_key)).strip()
                   for item in section
                   if isinstance(item, dict) and item.get(id_key)
               }
+
 
           def as_list(value):
               if value is None:
@@ -220,9 +247,11 @@ jobs:
               value = str(value).strip()
               return [value] if value else []
 
+
           def require_existing(reference, existing_ids, field_name, errors):
               if reference and reference not in existing_ids:
                   errors.append(f"{field_name} references missing identifier: {reference}")
+
 
           def require_all_existing(references, existing_ids, field_name, errors):
               missing = [ref for ref in references if ref not in existing_ids]
@@ -232,6 +261,7 @@ jobs:
                       f"{field_name} references missing identifiers: {', '.join(missing)}"
                   )
 
+
           def dump_list_item_block(item):
               return yaml.safe_dump(
                   [item],
@@ -240,6 +270,7 @@ jobs:
                   width=1000,
                   default_flow_style=False,
               ).rstrip() + "\n"
+
 
           def get_section_bounds(text, section_name):
               header_pattern = re.compile(rf"^{re.escape(section_name)}:\s*$", re.MULTILINE)
@@ -257,6 +288,7 @@ jobs:
 
               return match.start(), len(text)
 
+
           def detect_section_list_indent(text, section_name):
               bounds = get_section_bounds(text, section_name)
 
@@ -273,12 +305,14 @@ jobs:
 
               return "  "
 
+
           def indent_block(block, indent):
               lines = block.rstrip().splitlines()
               return "\n".join(
                   indent + line if line.strip() else line
                   for line in lines
               ) + "\n"
+
 
           def insert_block_into_top_level_section(text, section_name, block):
               header_pattern = re.compile(rf"^{re.escape(section_name)}:\s*$", re.MULTILINE)
@@ -304,26 +338,19 @@ jobs:
 
               return text.rstrip() + "\n" + block
 
-          def remove_list_items_by_identifier(text, section_name, id_key, identifiers):
-              identifiers = {str(x).strip() for x in identifiers if str(x).strip()}
 
-              if not identifiers:
-                  return text
-
+          def split_section_items(text, section_name):
               bounds = get_section_bounds(text, section_name)
 
               if not bounds:
-                  return text
+                  return None
 
               section_abs_start, section_abs_end = bounds
-              before_section = text[:section_abs_start]
               section_text = text[section_abs_start:section_abs_end]
-              after_section = text[section_abs_end:]
-
               lines = section_text.splitlines(keepends=True)
 
               if not lines:
-                  return text
+                  return None
 
               header = lines[0]
               body_lines = lines[1:]
@@ -337,7 +364,7 @@ jobs:
                       break
 
               if top_item_indent is None:
-                  return text
+                  top_item_indent = "  "
 
               item_start_pattern = re.compile(rf"^{re.escape(top_item_indent)}-\s+")
 
@@ -359,6 +386,46 @@ jobs:
               if current_item:
                   items.append(current_item)
 
+              return {
+                  "section_abs_start": section_abs_start,
+                  "section_abs_end": section_abs_end,
+                  "header": header,
+                  "preamble": preamble,
+                  "items": items,
+                  "top_item_indent": top_item_indent,
+              }
+
+
+          def item_has_identifier(item_text, id_key, identifier, top_item_indent):
+              id_pattern = re.compile(
+                  rf"(?m)^{re.escape(top_item_indent)}-\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
+              )
+
+              nested_id_pattern = re.compile(
+                  rf"(?m)^\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
+              )
+
+              return bool(id_pattern.search(item_text) or nested_id_pattern.search(item_text))
+
+
+          def remove_list_items_by_identifier(text, section_name, id_key, identifiers):
+              identifiers = {str(x).strip() for x in identifiers if str(x).strip()}
+
+              if not identifiers:
+                  return text
+
+              split = split_section_items(text, section_name)
+
+              if not split:
+                  return text
+
+              before_section = text[:split["section_abs_start"]]
+              after_section = text[split["section_abs_end"]:]
+              header = split["header"]
+              preamble = split["preamble"]
+              items = split["items"]
+              top_item_indent = split["top_item_indent"]
+
               kept_items = []
 
               for item_lines in items:
@@ -366,15 +433,7 @@ jobs:
                   should_remove = False
 
                   for identifier in identifiers:
-                      id_pattern = re.compile(
-                          rf"(?m)^{re.escape(top_item_indent)}-\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
-                      )
-
-                      nested_id_pattern = re.compile(
-                          rf"(?m)^\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
-                      )
-
-                      if id_pattern.search(item_text) or nested_id_pattern.search(item_text):
+                      if item_has_identifier(item_text, id_key, identifier, top_item_indent):
                           should_remove = True
                           break
 
@@ -389,6 +448,47 @@ jobs:
                   new_section_text += "\n"
 
               return before_section + new_section_text + after_section
+
+
+          def replace_list_item_by_identifier(text, section_name, id_key, identifier, replacement_item):
+              split = split_section_items(text, section_name)
+
+              if not split:
+                  fail(f"Could not find top-level section: {section_name}")
+
+              before_section = text[:split["section_abs_start"]]
+              after_section = text[split["section_abs_end"]:]
+              header = split["header"]
+              preamble = split["preamble"]
+              items = split["items"]
+              top_item_indent = split["top_item_indent"]
+
+              replacement_block = indent_block(dump_list_item_block(replacement_item), top_item_indent)
+
+              replaced = False
+              new_items = []
+
+              for item_lines in items:
+                  item_text = "".join(item_lines)
+
+                  if item_has_identifier(item_text, id_key, identifier, top_item_indent):
+                      new_items.append([replacement_block])
+                      replaced = True
+                  else:
+                      new_items.append(item_lines)
+
+              if not replaced:
+                  fail(f"Could not find {section_name} item with {id_key}: {identifier}")
+
+              new_section_text = header + "".join(preamble) + "".join(
+                  "".join(item) for item in new_items
+              )
+
+              if not new_section_text.endswith("\n"):
+                  new_section_text += "\n"
+
+              return before_section + new_section_text + after_section
+
 
           if not CATALOG_PATH.exists():
               fail(f"Could not find {CATALOG_PATH}")
@@ -419,17 +519,22 @@ jobs:
 
           is_add_dataset = str(os.environ.get("IS_ADD_DATASET", "")).lower() == "true"
           is_remove_dataset = str(os.environ.get("IS_REMOVE_DATASET", "")).lower() == "true"
+          is_edit_dataset = str(os.environ.get("IS_EDIT_DATASET", "")).lower() == "true"
 
-          if not is_add_dataset and not is_remove_dataset:
+          if not is_add_dataset and not is_remove_dataset and not is_edit_dataset:
               if "### Dataset title" in issue_body and "### Dataset description" in issue_body:
                   is_add_dataset = True
               elif "### Confirm dataset removal" in issue_body and "### Reason for removal" in issue_body:
                   is_remove_dataset = True
+              elif "### Confirm dataset edit" in issue_body and "### Dataset identifier" in issue_body:
+                  is_edit_dataset = True
 
-          if is_add_dataset and is_remove_dataset:
-              fail("Issue appears to be both Add Dataset and Remove Dataset. Check labels.")
+          active_modes = [is_add_dataset, is_remove_dataset, is_edit_dataset]
 
-          if not is_add_dataset and not is_remove_dataset:
+          if sum(1 for mode in active_modes if mode) > 1:
+              fail("Issue appears to match more than one supported intake form. Check labels.")
+
+          if not any(active_modes):
               fail("Issue does not match a supported catalog intake form.")
 
           if is_add_dataset:
@@ -707,6 +812,110 @@ jobs:
               if linked_quality_measurement_ids and is_yes(remove_quality_measurements_answer):
                   print(f"Removed linked quality measurements: {', '.join(linked_quality_measurement_ids)}")
 
+          if is_edit_dataset:
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              print(f"Edit requested for dataset identifier: {repr(dataset_identifier)}")
+
+              new_title = extract_field(issue_body, "Dataset title")
+              new_description = extract_field(issue_body, "Dataset description")
+              new_publisher = extract_field(issue_body, "Publisher name")
+              new_status = extract_field(issue_body, "Dataset status")
+              new_license = extract_field(issue_body, "License title or URL")
+              new_series = extract_field(issue_body, "Dataset series identifier")
+              new_policy = extract_field(issue_body, "Policy UID")
+              new_themes = extract_lines(issue_body, "Theme / concept identifiers")
+              new_lineage = extract_lines(issue_body, "Source / input dataset identifiers")
+              confirmation = extract_field(issue_body, "Confirm dataset edit")
+
+              errors = []
+
+              if not dataset_identifier:
+                  errors.append("Missing required field: Dataset identifier.")
+
+              if "I confirm that this dataset metadata should be updated." not in confirmation:
+                  errors.append("You must confirm dataset edit by ticking the confirmation checkbox.")
+
+              target_dataset = None
+
+              for dataset in datasets:
+                  if isinstance(dataset, dict) and str(dataset.get("identifier", "")).strip() == dataset_identifier:
+                      target_dataset = dataset
+                      break
+
+              if target_dataset is None:
+                  errors.append(f"Dataset identifier not found: {dataset_identifier}")
+
+              supplied_fields = [
+                  new_title,
+                  new_description,
+                  new_publisher,
+                  new_status,
+                  new_license,
+                  new_series,
+                  new_policy,
+                  "\n".join(new_themes),
+                  "\n".join(new_lineage),
+              ]
+
+              if not any(str(value).strip() for value in supplied_fields):
+                  errors.append("No editable fields were provided. Fill at least one optional field to update the dataset.")
+
+              require_existing(new_series, series_ids, "Dataset series identifier", errors)
+              require_existing(new_policy, policy_uids, "Policy UID", errors)
+              require_all_existing(new_themes, concept_ids, "Theme / concept identifiers", errors)
+
+              lineage_ids_without_self = [lineage_id for lineage_id in new_lineage if lineage_id != dataset_identifier]
+              require_all_existing(lineage_ids_without_self, dataset_ids, "Source / input dataset identifiers", errors)
+
+              if dataset_identifier in new_lineage:
+                  errors.append("A dataset cannot reference itself in Source / input dataset identifiers.")
+
+              if errors:
+                  fail(errors)
+
+              updated_dataset = copy.deepcopy(target_dataset)
+
+              if new_title:
+                  updated_dataset["title"] = new_title
+
+              if new_description:
+                  updated_dataset["description"] = new_description
+
+              if new_publisher:
+                  updated_dataset["publisher"] = {
+                      "name": new_publisher
+                  }
+
+              if new_status:
+                  updated_dataset["status"] = new_status
+
+              if new_license:
+                  updated_dataset["license"] = {
+                      "title": new_license
+                  }
+
+              if new_series:
+                  updated_dataset["inSeries"] = new_series
+
+              if new_policy:
+                  updated_dataset["hasPolicy"] = new_policy
+
+              if new_themes:
+                  updated_dataset["theme"] = new_themes
+
+              if new_lineage:
+                  updated_dataset["wasDerivedFrom"] = new_lineage
+
+              catalog_text = replace_list_item_by_identifier(
+                  catalog_text,
+                  "datasets",
+                  "identifier",
+                  dataset_identifier,
+                  updated_dataset
+              )
+
+              print(f"Updated dataset: {dataset_identifier}")
+
           CATALOG_PATH.write_text(catalog_text, encoding="utf-8")
 
           try:
@@ -758,6 +967,7 @@ jobs:
             data-catalog/data-catalog.yaml
           commit-message: "Catalog intake: issue #${{ github.event.issue.number }}"
           branch: "catalog-intake/${{ github.event.issue.number }}"
+          branch-suffix: timestamp
           delete-branch: true
           title: "Catalog intake: issue #${{ github.event.issue.number }}"
           body: |
