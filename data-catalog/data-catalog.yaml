@@ -411,16 +411,6 @@ datasets:
       - ex:energy-community
       - ex:energy
 
-  - identifier: ex:test-o5
-    title: TEST-O5
-    description: TESTING!
-    publisher:
-      name: EPRI
-    license:
-      title: TBD
-    status: None
-    distribution:
-      - ex:test-o5-distribution
 concepts:
   - prefLabel: energy
     identifier: ex:energy
@@ -739,6 +729,3 @@ policies:
           - Data Provider
 
 distributions:
-  - identifier: ex:test-o5-distribution
-    format: csv
-    accessURL: https://example.com/test.csv
