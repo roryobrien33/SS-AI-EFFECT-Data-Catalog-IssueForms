@@ -410,16 +410,6 @@ datasets:
       - ex:ai-system
       - ex:energy-community
       - ex:energy
-  - identifier: ex:test-final-c
-    title: Test Final C
-    description: testing
-    publisher:
-      name: EPRI
-    license:
-      title: TBD
-    status: None
-    distribution:
-    - ex:test-final-c-distribution
 concepts:
   - prefLabel: energy
     identifier: ex:energy
@@ -738,6 +728,3 @@ policies:
           - Data Provider
 
 distributions:
-  - identifier: ex:test-final-c-distribution
-    format: CSV
-    accessURL: https://example.com/test.csv
