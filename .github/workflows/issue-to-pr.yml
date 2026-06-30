@@ -15,6 +15,7 @@ jobs:
       contains(github.event.issue.labels.*.name, 'add-dataset') ||
       contains(github.event.issue.labels.*.name, 'remove-dataset') ||
       contains(github.event.issue.labels.*.name, 'edit-dataset') ||
+      contains(github.event.issue.labels.*.name, 'add-concept') ||
       (
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Dataset title') &&
@@ -28,6 +29,11 @@ jobs:
       (
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Confirm dataset edit')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Preferred label') &&
+        contains(github.event.issue.body, '### Concept definition') &&
+        contains(github.event.issue.body, '### Confirm concept addition')
       )
 
     runs-on: ubuntu-latest
@@ -67,6 +73,7 @@ jobs:
           IS_ADD_DATASET: ${{ contains(github.event.issue.labels.*.name, 'add-dataset') }}
           IS_REMOVE_DATASET: ${{ contains(github.event.issue.labels.*.name, 'remove-dataset') }}
           IS_EDIT_DATASET: ${{ contains(github.event.issue.labels.*.name, 'edit-dataset') }}
+          IS_ADD_CONCEPT: ${{ contains(github.event.issue.labels.*.name, 'add-concept') }}
         run: |
           python - <<'PY'
           import copy
@@ -152,7 +159,7 @@ jobs:
               value = str(value or "").lower().strip()
               value = re.sub(r"[^a-z0-9]+", "-", value)
               value = re.sub(r"-+", "-", value).strip("-")
-              return value or "dataset"
+              return value or "item"
 
 
           def is_yes(value):
@@ -474,16 +481,19 @@ jobs:
           is_add_dataset = str(os.environ.get("IS_ADD_DATASET", "")).lower() == "true"
           is_remove_dataset = str(os.environ.get("IS_REMOVE_DATASET", "")).lower() == "true"
           is_edit_dataset = str(os.environ.get("IS_EDIT_DATASET", "")).lower() == "true"
+          is_add_concept = str(os.environ.get("IS_ADD_CONCEPT", "")).lower() == "true"
 
-          if not is_add_dataset and not is_remove_dataset and not is_edit_dataset:
+          if not is_add_dataset and not is_remove_dataset and not is_edit_dataset and not is_add_concept:
               if "### Dataset title" in issue_body and "### Dataset description" in issue_body:
                   is_add_dataset = True
               elif "### Confirm dataset removal" in issue_body and "### Reason for removal" in issue_body:
                   is_remove_dataset = True
               elif "### Confirm dataset edit" in issue_body and "### Dataset identifier" in issue_body:
                   is_edit_dataset = True
+              elif "### Confirm concept addition" in issue_body and "### Preferred label" in issue_body:
+                  is_add_concept = True
 
-          active_modes = [is_add_dataset, is_remove_dataset, is_edit_dataset]
+          active_modes = [is_add_dataset, is_remove_dataset, is_edit_dataset, is_add_concept]
 
           if sum(1 for mode in active_modes if mode) > 1:
               fail("Issue appears to match more than one supported intake form. Check labels.")
@@ -869,6 +879,51 @@ jobs:
               )
 
               print(f"Updated dataset: {dataset_identifier}")
+
+          if is_add_concept:
+              concept_identifier = extract_field(issue_body, "Concept identifier")
+              pref_label = extract_field(issue_body, "Preferred label")
+              definition = extract_field(issue_body, "Concept definition")
+              alt_label = extract_field(issue_body, "Alternative label")
+              example = extract_field(issue_body, "Example")
+              confirmation = extract_field(issue_body, "Confirm concept addition")
+
+              errors = []
+
+              if not pref_label:
+                  errors.append("Missing required field: Preferred label.")
+
+              if not definition:
+                  errors.append("Missing required field: Concept definition.")
+
+              if "I confirm that this concept should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm concept addition by ticking the confirmation checkbox.")
+
+              if pref_label and not concept_identifier:
+                  concept_identifier = f"ex:{slugify(pref_label)}"
+
+              if concept_identifier in concept_ids:
+                  errors.append(f"Concept identifier already exists: {concept_identifier}")
+
+              if errors:
+                  fail(errors)
+
+              concept = {
+                  "prefLabel": pref_label,
+                  "identifier": concept_identifier,
+                  "definition": definition,
+              }
+
+              if alt_label:
+                  concept["altLabel"] = alt_label
+
+              if example:
+                  concept["example"] = example
+
+              concept_block = dump_list_item_block(concept)
+              catalog_text = insert_block_into_top_level_section(catalog_text, "concepts", concept_block)
+
+              print(f"Added concept: {concept_identifier}")
 
           CATALOG_PATH.write_text(catalog_text, encoding="utf-8")
 
