@@ -1,0 +1,89 @@
+name: Add Metric
+description: Submit a request to add a new data quality metric to the AI-EFFECT data catalog
+title: "[ADD METRIC] "
+labels:
+  - add-metric
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add Metric
+
+        Use this form to add a new data quality metric to the AI-EFFECT data catalog.
+
+        Metrics are referenced by data quality measurements using `isMeasurementOf`.
+
+        Example:
+
+        ```yaml
+        metrics:
+          - identifier: ex:completeness-score
+            prefLabel: completeness score
+            definition: A metric measuring the completeness of a dataset.
+            expectedDataType: xsd:float
+            inDimension: Completeness
+        ```
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Metric identifier
+      description: Unique metric identifier. If left blank, one will be generated from the preferred label.
+      placeholder: ex:completeness-score
+    validations:
+      required: false
+
+  - type: input
+    id: pref_label
+    attributes:
+      label: Preferred label
+      description: Human-readable preferred label for the metric.
+      placeholder: completeness score
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition
+    attributes:
+      label: Metric definition
+      description: Plain text definition of what this metric measures.
+      placeholder: A metric measuring the completeness of a dataset.
+    validations:
+      required: true
+
+  - type: input
+    id: expected_data_type
+    attributes:
+      label: Expected data type
+      description: Expected data type for values of this metric.
+      placeholder: xsd:float
+    validations:
+      required: true
+
+  - type: input
+    id: dimension
+    attributes:
+      label: Quality dimension
+      description: Quality dimension this metric belongs to.
+      placeholder: Completeness
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm metric addition
+      description: Confirm that this metric should be added to the catalog.
+      options:
+        - label: I confirm that this metric should be added to the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
