@@ -1,0 +1,87 @@
+name: Add Concept
+description: Submit a request to add a new concept/theme to the AI-EFFECT data catalog
+title: "[ADD CONCEPT] "
+labels:
+  - add-concept
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add Concept
+
+        Use this form to add a new concept/theme to the AI-EFFECT data catalog.
+
+        Concepts are used by datasets in the `theme` field.
+
+        Example:
+
+        ```yaml
+        concepts:
+          - identifier: ex:training-data
+            prefLabel: training data
+            definition: Dataset used for training AI models
+        ```
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Concept identifier
+      description: Unique concept identifier. If left blank, one will be generated from the preferred label.
+      placeholder: ex:forecast-data
+    validations:
+      required: false
+
+  - type: input
+    id: pref_label
+    attributes:
+      label: Preferred label
+      description: Human-readable preferred label for the concept.
+      placeholder: forecast data
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition
+    attributes:
+      label: Concept definition
+      description: Clear definition of what this concept means.
+      placeholder: Dataset containing forecasted energy demand, generation, or grid state information.
+    validations:
+      required: true
+
+  - type: input
+    id: alt_label
+    attributes:
+      label: Alternative label
+      description: Optional alternative label or synonym.
+      placeholder: prediction data
+    validations:
+      required: false
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: Optional example of when this concept should be used.
+      placeholder: Use this concept for datasets containing day-ahead load forecasts.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm concept addition
+      description: Confirm that this concept should be added to the catalog.
+      options:
+        - label: I confirm that this concept should be added to the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
