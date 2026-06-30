@@ -39,8 +39,8 @@ jobs:
           echo "Body marker check - has Reason for removal:"
           echo "${{ contains(github.event.issue.body, '### Reason for removal') }}"
           echo ""
-          echo "Body marker check - has Removal confirmation:"
-          echo "${{ contains(github.event.issue.body, '### Removal confirmation') }}"
+          echo "Body marker check - has Confirm dataset removal:"
+          echo "${{ contains(github.event.issue.body, '### Confirm dataset removal') }}"
           echo ""
           echo "Full issue body:"
           cat <<'EOF'
@@ -59,7 +59,7 @@ jobs:
       (
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Reason for removal') &&
-        contains(github.event.issue.body, '### Removal confirmation')
+        contains(github.event.issue.body, '### Confirm dataset removal')
       )
 
     runs-on: ubuntu-latest
@@ -423,7 +423,7 @@ jobs:
           if not is_add_dataset and not is_remove_dataset:
               if "### Dataset title" in issue_body and "### Dataset description" in issue_body:
                   is_add_dataset = True
-              elif "### Removal confirmation" in issue_body and "### Reason for removal" in issue_body:
+              elif "### Confirm dataset removal" in issue_body and "### Reason for removal" in issue_body:
                   is_remove_dataset = True
 
           if is_add_dataset and is_remove_dataset:
@@ -624,7 +624,7 @@ jobs:
               reason = extract_field(issue_body, "Reason for removal")
               remove_distributions_answer = extract_field(issue_body, "Remove linked distributions?")
               remove_quality_measurements_answer = extract_field(issue_body, "Remove linked quality measurements?")
-              confirmation = extract_field(issue_body, "Removal confirmation")
+              confirmation = extract_field(issue_body, "Confirm dataset removal")
 
               errors = []
 
@@ -634,8 +634,8 @@ jobs:
               if not reason:
                   errors.append("Missing required field: Reason for removal.")
 
-              if confirmation != "REMOVE":
-                  errors.append("Removal confirmation must exactly be: REMOVE")
+              if "I confirm that this dataset should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm dataset removal by ticking the confirmation checkbox.")
 
               target_dataset = None
 
