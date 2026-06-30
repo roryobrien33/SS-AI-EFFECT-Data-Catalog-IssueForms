@@ -1,0 +1,137 @@
+name: Edit Dataset
+description: Submit a request to edit an existing dataset in the AI-EFFECT data catalog
+title: "[EDIT DATASET] "
+labels:
+  - edit-dataset
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Edit Dataset
+
+        Use this form to request changes to an existing dataset in the AI-EFFECT data catalog.
+
+        The dataset identifier is required.
+
+        Leave any optional field blank if the existing value should remain unchanged.
+
+        This form updates dataset-level metadata only. It does not currently edit linked distributions or data quality measurements.
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Dataset identifier
+      description: Existing dataset identifier to edit. You can copy this from the dataset page Overview section.
+      placeholder: ex:uc1-training-dataset
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Dataset title
+      description: Optional. Leave blank to keep the existing title.
+      placeholder: Updated dataset title
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Dataset description
+      description: Optional. Leave blank to keep the existing description.
+      placeholder: Updated dataset description.
+    validations:
+      required: false
+
+  - type: input
+    id: publisher
+    attributes:
+      label: Publisher name
+      description: Optional. Leave blank to keep the existing publisher.
+      placeholder: EPRI
+    validations:
+      required: false
+
+  - type: input
+    id: status
+    attributes:
+      label: Dataset status
+      description: Optional. Leave blank to keep the existing status.
+      placeholder: draft
+    validations:
+      required: false
+
+  - type: input
+    id: license
+    attributes:
+      label: License title or URL
+      description: Optional. Leave blank to keep the existing license.
+      placeholder: TBD
+    validations:
+      required: false
+
+  - type: input
+    id: series
+    attributes:
+      label: Dataset series identifier
+      description: Optional. Existing dataset series identifier. Leave blank to keep unchanged.
+      placeholder: ex:uc1-multi-energy-sector-coupling
+    validations:
+      required: false
+
+  - type: input
+    id: policy
+    attributes:
+      label: Policy UID
+      description: Optional. Existing policy UID. Leave blank to keep unchanged.
+      placeholder: plcy:open-information
+    validations:
+      required: false
+
+  - type: textarea
+    id: themes
+    attributes:
+      label: Theme / concept identifiers
+      description: |
+        Optional. One concept identifier per line.
+        If provided, this replaces the existing theme list.
+        Leave blank to keep existing themes.
+      placeholder: |
+        ex:energy
+        ex:training-data
+    validations:
+      required: false
+
+  - type: textarea
+    id: lineage
+    attributes:
+      label: Source / input dataset identifiers
+      description: |
+        Optional. One source dataset identifier per line.
+        If provided, this replaces the existing wasDerivedFrom list.
+        Leave blank to keep existing lineage.
+      placeholder: |
+        ex:source-dataset-a
+        ex:source-dataset-b
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm dataset edit
+      description: Confirm that this edit request should update the dataset metadata.
+      options:
+        - label: I confirm that this dataset metadata should be updated.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
