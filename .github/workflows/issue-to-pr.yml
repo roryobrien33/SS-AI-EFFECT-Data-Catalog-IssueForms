@@ -17,6 +17,8 @@ jobs:
       contains(github.event.issue.labels.*.name, 'edit-dataset') ||
       contains(github.event.issue.labels.*.name, 'add-concept') ||
       contains(github.event.issue.labels.*.name, 'remove-concept') ||
+      contains(github.event.issue.labels.*.name, 'add-metric') ||
+      contains(github.event.issue.labels.*.name, 'remove-metric') ||
       (
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Dataset title') &&
@@ -40,6 +42,16 @@ jobs:
         contains(github.event.issue.body, '### Concept identifier') &&
         contains(github.event.issue.body, '### Reason for removal') &&
         contains(github.event.issue.body, '### Confirm concept removal')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Preferred label') &&
+        contains(github.event.issue.body, '### Metric definition') &&
+        contains(github.event.issue.body, '### Confirm metric addition')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Metric identifier') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm metric removal')
       )
 
     runs-on: ubuntu-latest
@@ -81,6 +93,8 @@ jobs:
           IS_EDIT_DATASET: ${{ contains(github.event.issue.labels.*.name, 'edit-dataset') }}
           IS_ADD_CONCEPT: ${{ contains(github.event.issue.labels.*.name, 'add-concept') }}
           IS_REMOVE_CONCEPT: ${{ contains(github.event.issue.labels.*.name, 'remove-concept') }}
+          IS_ADD_METRIC: ${{ contains(github.event.issue.labels.*.name, 'add-metric') }}
+          IS_REMOVE_METRIC: ${{ contains(github.event.issue.labels.*.name, 'remove-metric') }}
         run: |
           python - <<'PY'
           import copy
@@ -490,8 +504,18 @@ jobs:
           is_edit_dataset = str(os.environ.get("IS_EDIT_DATASET", "")).lower() == "true"
           is_add_concept = str(os.environ.get("IS_ADD_CONCEPT", "")).lower() == "true"
           is_remove_concept = str(os.environ.get("IS_REMOVE_CONCEPT", "")).lower() == "true"
+          is_add_metric = str(os.environ.get("IS_ADD_METRIC", "")).lower() == "true"
+          is_remove_metric = str(os.environ.get("IS_REMOVE_METRIC", "")).lower() == "true"
 
-          if not is_add_dataset and not is_remove_dataset and not is_edit_dataset and not is_add_concept and not is_remove_concept:
+          if (
+              not is_add_dataset
+              and not is_remove_dataset
+              and not is_edit_dataset
+              and not is_add_concept
+              and not is_remove_concept
+              and not is_add_metric
+              and not is_remove_metric
+          ):
               if "### Dataset title" in issue_body and "### Dataset description" in issue_body:
                   is_add_dataset = True
               elif "### Confirm dataset removal" in issue_body and "### Reason for removal" in issue_body:
@@ -502,6 +526,10 @@ jobs:
                   is_add_concept = True
               elif "### Confirm concept removal" in issue_body and "### Concept identifier" in issue_body:
                   is_remove_concept = True
+              elif "### Confirm metric addition" in issue_body and "### Metric definition" in issue_body:
+                  is_add_metric = True
+              elif "### Confirm metric removal" in issue_body and "### Metric identifier" in issue_body:
+                  is_remove_metric = True
 
           active_modes = [
               is_add_dataset,
@@ -509,6 +537,8 @@ jobs:
               is_edit_dataset,
               is_add_concept,
               is_remove_concept,
+              is_add_metric,
+              is_remove_metric,
           ]
 
           if sum(1 for mode in active_modes if mode) > 1:
@@ -946,7 +976,6 @@ jobs:
 
           if is_remove_concept:
               concept_identifier = extract_field(issue_body, "Concept identifier")
-              pref_label = extract_field(issue_body, "Concept preferred label")
               reason = extract_field(issue_body, "Reason for removal")
               confirmation = extract_field(issue_body, "Confirm concept removal")
 
@@ -1005,6 +1034,113 @@ jobs:
               )
 
               print(f"Removed concept: {concept_identifier}")
+
+          if is_add_metric:
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              pref_label = extract_field(issue_body, "Preferred label")
+              definition = extract_field(issue_body, "Metric definition")
+              expected_data_type = extract_field(issue_body, "Expected data type")
+              dimension = extract_field(issue_body, "Quality dimension")
+              confirmation = extract_field(issue_body, "Confirm metric addition")
+
+              errors = []
+
+              if not pref_label:
+                  errors.append("Missing required field: Preferred label.")
+
+              if not definition:
+                  errors.append("Missing required field: Metric definition.")
+
+              if not expected_data_type:
+                  errors.append("Missing required field: Expected data type.")
+
+              if not dimension:
+                  errors.append("Missing required field: Quality dimension.")
+
+              if "I confirm that this metric should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm metric addition by ticking the confirmation checkbox.")
+
+              if any(marker in definition for marker in ["identifier:", "prefLabel:", "metrics:", "datasets:"]):
+                  errors.append("Metric definition must be plain text, not YAML. Do not paste a YAML example into the definition field.")
+
+              if pref_label and not metric_identifier:
+                  metric_identifier = f"ex:{slugify(pref_label)}"
+
+              if metric_identifier in metric_ids:
+                  errors.append(f"Metric identifier already exists: {metric_identifier}")
+
+              if errors:
+                  fail(errors)
+
+              metric = {
+                  "identifier": metric_identifier,
+                  "prefLabel": pref_label,
+                  "definition": definition,
+                  "expectedDataType": expected_data_type,
+                  "inDimension": dimension,
+              }
+
+              metric_block = dump_list_item_block(metric)
+              catalog_text = insert_block_into_top_level_section(catalog_text, "metrics", metric_block)
+
+              print(f"Added metric: {metric_identifier}")
+
+          if is_remove_metric:
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm metric removal")
+
+              errors = []
+
+              if not metric_identifier:
+                  errors.append("Missing required field: Metric identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this metric should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm metric removal by ticking the confirmation checkbox.")
+
+              target_metric = None
+
+              for metric in metrics:
+                  if isinstance(metric, dict) and str(metric.get("identifier", "")).strip() == metric_identifier:
+                      target_metric = metric
+                      break
+
+              if target_metric is None:
+                  errors.append(f"Metric identifier not found: {metric_identifier}")
+
+              referencing_quality_measurements = []
+
+              for quality_measurement in quality_measurements:
+                  if not isinstance(quality_measurement, dict):
+                      continue
+
+                  quality_measurement_identifier = str(quality_measurement.get("identifier", "")).strip()
+                  measured_metric = str(quality_measurement.get("isMeasurementOf", "")).strip()
+
+                  if measured_metric == metric_identifier:
+                      referencing_quality_measurements.append(quality_measurement_identifier)
+
+              if referencing_quality_measurements:
+                  errors.append(
+                      "Metric cannot be removed because it is still referenced by quality measurements: "
+                      + ", ".join(referencing_quality_measurements)
+                      + ". Remove or replace those quality measurements first."
+                  )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "metrics",
+                  "identifier",
+                  [metric_identifier]
+              )
+
+              print(f"Removed metric: {metric_identifier}")
 
           CATALOG_PATH.write_text(catalog_text, encoding="utf-8")
 
