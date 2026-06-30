@@ -52,12 +52,17 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: dropdown
     id: expected_data_type
     attributes:
       label: Expected data type
-      description: Expected data type for values of this metric.
-      placeholder: xsd:float
+      description: Select the expected data type for values of this metric.
+      options:
+        - xsd:float
+        - xsd:integer
+        - xsd:string
+        - xsd:boolean
+        - xsd:dateTime
     validations:
       required: true
 
