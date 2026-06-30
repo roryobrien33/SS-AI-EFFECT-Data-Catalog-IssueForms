@@ -411,15 +411,17 @@ datasets:
       - ex:energy-community
       - ex:energy
   - identifier: ex:test-d
-    title: Test-D
-    description: Testing testing
+    title: Test-D1
+    description: Kachow
     publisher:
-      name: EPRI
+      name: ESB
     license:
-      title: TBD
-    status: None
+      title: License-1
+    status: planned
     distribution:
     - ex:test-d-distribution
+    theme:
+    - ex:energy
 concepts:
   - prefLabel: energy
     identifier: ex:energy
