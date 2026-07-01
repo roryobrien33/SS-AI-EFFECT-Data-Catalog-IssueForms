@@ -744,9 +744,6 @@ policies:
         action: provide
         assignee:
           - Data Provider
-  - uid: plcy:test-policy
-    title: test-policy
-    description: NA
 distributions:
   - identifier: ex:test-d-distribution
     format: csv
