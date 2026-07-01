@@ -522,7 +522,10 @@ qualityMeasurements:
     isMeasurementOf: ex:fkrhkqewjewrc
     generatedAtTime: 2025-04-22
     value: 0.9
-
+  - identifier: ex:test-d-completeness-score-quality-measurement
+    computedOn: ex:test-d
+    isMeasurementOf: ex:completeness-score
+    value: 0.5
 policies:
   - uid: plcy:open-information
     title: Open Information Policy
