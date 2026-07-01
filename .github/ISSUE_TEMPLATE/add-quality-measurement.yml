@@ -1,0 +1,94 @@
+name: Add Quality Measurement
+description: Submit a request to add a new data quality measurement to the AI-EFFECT data catalog
+title: "[ADD QUALITY MEASUREMENT] "
+labels:
+  - add-quality-measurement
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add Quality Measurement
+
+        Use this form to add a new data quality measurement to the AI-EFFECT data catalog.
+
+        A quality measurement records the measured value of a metric for a specific dataset.
+
+        Example:
+
+        ```yaml
+        qualityMeasurements:
+          - identifier: ex:accuracy-uc1-training-dataset
+            computedOn: ex:uc1-training-dataset
+            isMeasurementOf: ex:accuracy-score
+            value: 0.92
+            generatedAtTime: 2026-07-01
+        ```
+
+        Before submitting this form, make sure:
+        - the dataset identifier already exists
+        - the metric identifier already exists
+        - the value matches the expected data type of the metric
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Quality measurement identifier
+      description: Unique identifier for this quality measurement. If left blank, one will be generated from the dataset and metric identifiers.
+      placeholder: ex:accuracy-uc1-training-dataset
+    validations:
+      required: false
+
+  - type: input
+    id: dataset_identifier
+    attributes:
+      label: Dataset identifier
+      description: Existing dataset identifier that this quality measurement is computed on.
+      placeholder: ex:uc1-training-dataset
+    validations:
+      required: true
+
+  - type: input
+    id: metric_identifier
+    attributes:
+      label: Metric identifier
+      description: Existing metric identifier that this quality measurement measures.
+      placeholder: ex:accuracy-score
+    validations:
+      required: true
+
+  - type: input
+    id: value
+    attributes:
+      label: Quality measurement value
+      description: Value of the quality measurement. The workflow will validate this against the metric expected data type where possible.
+      placeholder: "0.92"
+    validations:
+      required: true
+
+  - type: input
+    id: generated_at_time
+    attributes:
+      label: Generated date
+      description: Optional date when the quality measurement was generated. Use YYYY-MM-DD format.
+      placeholder: "2026-07-01"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm quality measurement addition
+      description: Confirm that this quality measurement should be added to the catalog.
+      options:
+        - label: I confirm that this quality measurement should be added to the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
