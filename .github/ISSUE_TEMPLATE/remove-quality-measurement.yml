@@ -1,0 +1,86 @@
+name: Remove Quality Measurement
+description: Submit a request to remove an existing data quality measurement from the AI-EFFECT data catalog
+title: "[REMOVE QUALITY MEASUREMENT] "
+labels:
+  - remove-quality-measurement
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Remove Quality Measurement
+
+        Use this form to request removal of an existing data quality measurement from the AI-EFFECT data catalog.
+
+        A quality measurement records the measured value of a metric for a specific dataset.
+
+        Example:
+
+        ```yaml
+        qualityMeasurements:
+          - identifier: ex:accuracy-uc1-training-dataset
+            computedOn: ex:uc1-training-dataset
+            isMeasurementOf: ex:accuracy-score
+            value: 0.92
+            generatedAtTime: 2026-07-01
+        ```
+
+        Removing a quality measurement will remove only the measurement record itself.
+
+        It will not remove:
+        - the dataset referenced by `computedOn`
+        - the metric referenced by `isMeasurementOf`
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Quality measurement identifier
+      description: Existing quality measurement identifier to remove.
+      placeholder: ex:accuracy-uc1-training-dataset
+    validations:
+      required: true
+
+  - type: input
+    id: dataset_identifier
+    attributes:
+      label: Dataset identifier
+      description: Optional dataset identifier, used only for reviewer confirmation.
+      placeholder: ex:uc1-training-dataset
+    validations:
+      required: false
+
+  - type: input
+    id: metric_identifier
+    attributes:
+      label: Metric identifier
+      description: Optional metric identifier, used only for reviewer confirmation.
+      placeholder: ex:accuracy-score
+    validations:
+      required: false
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for removal
+      description: Explain why this quality measurement should be removed.
+      placeholder: This quality measurement was added in error or is no longer valid.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm quality measurement removal
+      description: Confirm that this quality measurement should be removed from the catalog.
+      options:
+        - label: I confirm that this quality measurement should be removed from the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
