@@ -608,3 +608,983 @@ jobs:
 
           if not any(active_modes):
               fail("Issue does not match a supported catalog intake form.")
+
+          if is_add_dataset:
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              dataset_title = extract_field(issue_body, "Dataset title")
+              dataset_description = extract_field(issue_body, "Dataset description")
+              publisher_name = extract_field(issue_body, "Publisher name")
+              dataset_status = extract_field(issue_body, "Dataset status")
+              license_value = extract_field(issue_body, "License title or URL")
+              dataset_series_identifier = extract_field(issue_body, "Dataset series identifier")
+              policy_uid = extract_field(issue_body, "Policy UID")
+              theme_identifiers = extract_lines(issue_body, "Theme / concept identifiers")
+              lineage_identifiers = extract_lines(issue_body, "Source / input dataset identifiers")
+
+              add_distribution = extract_field(issue_body, "Add a distribution?")
+              distribution_identifier = extract_field(issue_body, "Distribution identifier")
+              distribution_format = extract_field(issue_body, "Distribution format")
+              distribution_access_url = extract_field(issue_body, "Distribution access URL")
+              distribution_issued = extract_field(issue_body, "Distribution issued date")
+
+              add_quality = extract_field(issue_body, "Add data quality measurement?")
+              quality_measurement_identifier = extract_field(issue_body, "Quality measurement identifier")
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              quality_measurement_value = extract_field(issue_body, "Quality measurement value")
+              quality_measurement_date = extract_field(issue_body, "Quality measurement generated date")
+
+              errors = []
+
+              if not dataset_title:
+                  errors.append("Missing required field: Dataset title.")
+
+              if not dataset_description:
+                  errors.append("Missing required field: Dataset description.")
+
+              if not publisher_name:
+                  errors.append("Missing required field: Publisher name.")
+
+              if not license_value:
+                  errors.append("Missing required field: License title or URL.")
+
+              if dataset_title and not dataset_identifier:
+                  dataset_identifier = f"ex:{slugify(dataset_title)}"
+
+              if dataset_identifier in dataset_ids:
+                  errors.append(
+                      f"Dataset identifier already exists: {dataset_identifier}. Use the Edit Dataset form instead."
+                  )
+
+              require_all_existing(theme_identifiers, concept_ids, "Theme / concept identifiers", errors)
+              require_existing(dataset_series_identifier, series_ids, "Dataset series identifier", errors)
+              require_existing(policy_uid, policy_uids, "Policy UID", errors)
+              require_all_existing(lineage_identifiers, dataset_ids, "Source / input dataset identifiers", errors)
+
+              if is_yes(add_distribution):
+                  if not distribution_identifier:
+                      distribution_identifier = f"{dataset_identifier}-distribution"
+
+                  if distribution_identifier in distribution_ids:
+                      errors.append(f"Distribution identifier already exists: {distribution_identifier}")
+
+                  if not distribution_format:
+                      errors.append("Distribution format is required when 'Add a distribution?' is Yes.")
+
+                  if not distribution_access_url:
+                      errors.append("Distribution access URL is required when 'Add a distribution?' is Yes.")
+
+                  if distribution_access_url and not looks_like_url(distribution_access_url):
+                      errors.append("Distribution access URL must start with http:// or https://.")
+
+                  if distribution_issued and not looks_like_date(distribution_issued):
+                      errors.append("Distribution issued date must use YYYY-MM-DD format.")
+
+              if is_yes(add_quality):
+                  if not metric_identifier:
+                      errors.append("Metric identifier is required when 'Add data quality measurement?' is Yes.")
+
+                  require_existing(metric_identifier, metric_ids, "Metric identifier", errors)
+
+                  if not quality_measurement_value:
+                      errors.append("Quality measurement value is required when 'Add data quality measurement?' is Yes.")
+
+                  if quality_measurement_value:
+                      try:
+                          quality_measurement_value_float = float(quality_measurement_value)
+                      except ValueError:
+                          errors.append("Quality measurement value must be numeric.")
+                          quality_measurement_value_float = None
+                  else:
+                      quality_measurement_value_float = None
+
+                  if quality_measurement_date and not looks_like_date(quality_measurement_date):
+                      errors.append("Quality measurement generated date must use YYYY-MM-DD format.")
+
+                  if not quality_measurement_identifier and dataset_identifier:
+                      quality_measurement_identifier = f"{dataset_identifier}-quality-measurement"
+
+                  if quality_measurement_identifier in quality_measurement_ids:
+                      errors.append(
+                          f"Quality measurement identifier already exists: {quality_measurement_identifier}"
+                      )
+              else:
+                  quality_measurement_value_float = None
+
+              if errors:
+                  fail(errors)
+
+              dataset = {
+                  "identifier": dataset_identifier,
+                  "title": dataset_title,
+                  "description": dataset_description,
+                  "publisher": {
+                      "name": publisher_name
+                  },
+                  "license": {
+                      "title": license_value
+                  },
+              }
+
+              if dataset_status:
+                  dataset["status"] = dataset_status
+
+              if dataset_series_identifier:
+                  dataset["inSeries"] = dataset_series_identifier
+
+              if policy_uid:
+                  dataset["hasPolicy"] = policy_uid
+
+              if theme_identifiers:
+                  dataset["theme"] = theme_identifiers
+
+              if lineage_identifiers:
+                  dataset["wasDerivedFrom"] = lineage_identifiers
+
+              distribution = None
+
+              if is_yes(add_distribution):
+                  dataset["distribution"] = [distribution_identifier]
+
+                  distribution = {
+                      "identifier": distribution_identifier,
+                      "format": distribution_format,
+                      "accessURL": distribution_access_url,
+                  }
+
+                  if distribution_issued:
+                      distribution["issued"] = distribution_issued
+
+              quality_measurement = None
+
+              if is_yes(add_quality):
+                  quality_measurement = {
+                      "identifier": quality_measurement_identifier,
+                      "computedOn": dataset_identifier,
+                      "isMeasurementOf": metric_identifier,
+                      "value": quality_measurement_value_float,
+                  }
+
+                  if quality_measurement_date:
+                      quality_measurement["generatedAtTime"] = quality_measurement_date
+
+              dataset_block = dump_list_item_block(dataset)
+              catalog_text = insert_block_into_top_level_section(catalog_text, "datasets", dataset_block)
+
+              if distribution:
+                  distribution_block = dump_list_item_block(distribution)
+                  catalog_text = insert_block_into_top_level_section(
+                      catalog_text,
+                      "distributions",
+                      distribution_block
+                  )
+
+              if quality_measurement:
+                  quality_measurement_block = dump_list_item_block(quality_measurement)
+                  catalog_text = insert_block_into_top_level_section(
+                      catalog_text,
+                      "qualityMeasurements",
+                      quality_measurement_block
+                  )
+
+              print(f"Added dataset: {dataset_identifier}")
+
+              if distribution:
+                  print(f"Added distribution: {distribution_identifier}")
+
+              if quality_measurement:
+                  print(f"Added quality measurement: {quality_measurement_identifier}")
+
+          if is_remove_dataset:
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              print(f"Remove requested for dataset identifier: {repr(dataset_identifier)}")
+
+              reason = extract_field(issue_body, "Reason for removal")
+              remove_distributions_answer = extract_field(issue_body, "Remove linked distributions?")
+              remove_quality_measurements_answer = extract_field(issue_body, "Remove linked quality measurements?")
+              confirmation = extract_field(issue_body, "Confirm dataset removal")
+
+              errors = []
+
+              if not dataset_identifier:
+                  errors.append("Missing required field: Dataset identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this dataset should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm dataset removal by ticking the confirmation checkbox.")
+
+              target_dataset = None
+
+              for dataset in datasets:
+                  if isinstance(dataset, dict) and str(dataset.get("identifier", "")).strip() == dataset_identifier:
+                      target_dataset = dataset
+                      break
+
+              if target_dataset is None:
+                  errors.append(f"Dataset identifier not found: {dataset_identifier}")
+
+              linked_distribution_ids = []
+              linked_quality_measurement_ids = []
+
+              if target_dataset is not None:
+                  linked_distribution_ids = as_list(target_dataset.get("distribution"))
+
+                  linked_quality_measurement_ids = [
+                      str(qm.get("identifier")).strip()
+                      for qm in quality_measurements
+                      if isinstance(qm, dict)
+                      and str(qm.get("computedOn", "")).strip() == dataset_identifier
+                      and str(qm.get("identifier", "")).strip()
+                  ]
+
+              if linked_distribution_ids and not is_yes(remove_distributions_answer):
+                  errors.append(
+                      "Dataset has linked distributions. Select Yes for 'Remove linked distributions?' "
+                      f"or remove them separately first. Linked distributions: {', '.join(linked_distribution_ids)}"
+                  )
+
+              if linked_quality_measurement_ids and not is_yes(remove_quality_measurements_answer):
+                  errors.append(
+                      "Dataset has linked quality measurements. Select Yes for 'Remove linked quality measurements?' "
+                      f"or remove them separately first. Linked quality measurements: {', '.join(linked_quality_measurement_ids)}"
+                  )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "datasets",
+                  "identifier",
+                  [dataset_identifier]
+              )
+
+              if linked_distribution_ids and is_yes(remove_distributions_answer):
+                  catalog_text = remove_list_items_by_identifier(
+                      catalog_text,
+                      "distributions",
+                      "identifier",
+                      linked_distribution_ids
+                  )
+
+              if linked_quality_measurement_ids and is_yes(remove_quality_measurements_answer):
+                  catalog_text = remove_list_items_by_identifier(
+                      catalog_text,
+                      "qualityMeasurements",
+                      "identifier",
+                      linked_quality_measurement_ids
+                  )
+
+              print(f"Removed dataset: {dataset_identifier}")
+
+              if linked_distribution_ids and is_yes(remove_distributions_answer):
+                  print(f"Removed linked distributions: {', '.join(linked_distribution_ids)}")
+
+              if linked_quality_measurement_ids and is_yes(remove_quality_measurements_answer):
+                  print(f"Removed linked quality measurements: {', '.join(linked_quality_measurement_ids)}")
+
+          if is_edit_dataset:
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              print(f"Edit requested for dataset identifier: {repr(dataset_identifier)}")
+
+              new_title = extract_field(issue_body, "Dataset title")
+              new_description = extract_field(issue_body, "Dataset description")
+              new_publisher = extract_field(issue_body, "Publisher name")
+              new_status = extract_field(issue_body, "Dataset status")
+              new_license = extract_field(issue_body, "License title or URL")
+              new_series = extract_field(issue_body, "Dataset series identifier")
+              new_policy = extract_field(issue_body, "Policy UID")
+              new_themes = extract_lines(issue_body, "Theme / concept identifiers")
+              new_lineage = extract_lines(issue_body, "Source / input dataset identifiers")
+              confirmation = extract_field(issue_body, "Confirm dataset edit")
+
+              errors = []
+
+              if not dataset_identifier:
+                  errors.append("Missing required field: Dataset identifier.")
+
+              if "I confirm that this dataset metadata should be updated." not in confirmation:
+                  errors.append("You must confirm dataset edit by ticking the confirmation checkbox.")
+
+              target_dataset = None
+
+              for dataset in datasets:
+                  if isinstance(dataset, dict) and str(dataset.get("identifier", "")).strip() == dataset_identifier:
+                      target_dataset = dataset
+                      break
+
+              if target_dataset is None:
+                  errors.append(f"Dataset identifier not found: {dataset_identifier}")
+
+              supplied_fields = [
+                  new_title,
+                  new_description,
+                  new_publisher,
+                  new_status,
+                  new_license,
+                  new_series,
+                  new_policy,
+                  "\n".join(new_themes),
+                  "\n".join(new_lineage),
+              ]
+
+              if not any(str(value).strip() for value in supplied_fields):
+                  errors.append("No editable fields were provided. Fill at least one optional field to update the dataset.")
+
+              require_existing(new_series, series_ids, "Dataset series identifier", errors)
+              require_existing(new_policy, policy_uids, "Policy UID", errors)
+              require_all_existing(new_themes, concept_ids, "Theme / concept identifiers", errors)
+
+              lineage_ids_without_self = [lineage_id for lineage_id in new_lineage if lineage_id != dataset_identifier]
+              require_all_existing(lineage_ids_without_self, dataset_ids, "Source / input dataset identifiers", errors)
+
+              if dataset_identifier in new_lineage:
+                  errors.append("A dataset cannot reference itself in Source / input dataset identifiers.")
+
+              if errors:
+                  fail(errors)
+
+              updated_dataset = copy.deepcopy(target_dataset)
+
+              if new_title:
+                  updated_dataset["title"] = new_title
+
+              if new_description:
+                  updated_dataset["description"] = new_description
+
+              if new_publisher:
+                  updated_dataset["publisher"] = {
+                      "name": new_publisher
+                  }
+
+              if new_status:
+                  updated_dataset["status"] = new_status
+
+              if new_license:
+                  updated_dataset["license"] = {
+                      "title": new_license
+                  }
+
+              if new_series:
+                  updated_dataset["inSeries"] = new_series
+
+              if new_policy:
+                  updated_dataset["hasPolicy"] = new_policy
+
+              if new_themes:
+                  updated_dataset["theme"] = new_themes
+
+              if new_lineage:
+                  updated_dataset["wasDerivedFrom"] = new_lineage
+
+              catalog_text = replace_list_item_by_identifier(
+                  catalog_text,
+                  "datasets",
+                  "identifier",
+                  dataset_identifier,
+                  updated_dataset
+              )
+
+              print(f"Updated dataset: {dataset_identifier}")
+
+          if is_add_concept:
+              concept_identifier = extract_field(issue_body, "Concept identifier")
+              pref_label = extract_field(issue_body, "Preferred label")
+              definition = extract_field(issue_body, "Concept definition")
+              alt_label = extract_field(issue_body, "Alternative label")
+              example = extract_field(issue_body, "Example")
+              confirmation = extract_field(issue_body, "Confirm concept addition")
+
+              errors = []
+
+              if not pref_label:
+                  errors.append("Missing required field: Preferred label.")
+
+              if not definition:
+                  errors.append("Missing required field: Concept definition.")
+
+              if "I confirm that this concept should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm concept addition by ticking the confirmation checkbox.")
+
+              if any(marker in definition for marker in ["identifier:", "prefLabel:", "concepts:", "datasets:"]):
+                  errors.append("Concept definition must be plain text, not YAML. Do not paste a YAML example into the definition field.")
+
+              if pref_label and not concept_identifier:
+                  concept_identifier = f"ex:{slugify(pref_label)}"
+
+              if concept_identifier in concept_ids:
+                  errors.append(f"Concept identifier already exists: {concept_identifier}")
+
+              if errors:
+                  fail(errors)
+
+              concept = {
+                  "prefLabel": pref_label,
+                  "identifier": concept_identifier,
+                  "definition": definition,
+              }
+
+              if alt_label:
+                  concept["altLabel"] = alt_label
+
+              if example:
+                  concept["example"] = example
+
+              concept_block = dump_list_item_block(concept)
+              catalog_text = insert_block_into_top_level_section(catalog_text, "concepts", concept_block)
+
+              print(f"Added concept: {concept_identifier}")
+
+          if is_remove_concept:
+              concept_identifier = extract_field(issue_body, "Concept identifier")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm concept removal")
+
+              errors = []
+
+              if not concept_identifier:
+                  errors.append("Missing required field: Concept identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this concept should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm concept removal by ticking the confirmation checkbox.")
+
+              target_concept = None
+
+              for concept in concepts:
+                  if isinstance(concept, dict) and str(concept.get("identifier", "")).strip() == concept_identifier:
+                      target_concept = concept
+                      break
+
+              if target_concept is None:
+                  errors.append(f"Concept identifier not found: {concept_identifier}")
+
+              referencing_datasets = []
+
+              for dataset in datasets:
+                  if not isinstance(dataset, dict):
+                      continue
+
+                  dataset_identifier = str(dataset.get("identifier", "")).strip()
+                  dataset_title = str(dataset.get("title", "")).strip()
+                  dataset_themes = as_list(dataset.get("theme"))
+
+                  if concept_identifier in dataset_themes:
+                      if dataset_title:
+                          referencing_datasets.append(f"{dataset_identifier} ({dataset_title})")
+                      else:
+                          referencing_datasets.append(dataset_identifier)
+
+              if referencing_datasets:
+                  errors.append(
+                      "Concept cannot be removed because it is still referenced by dataset theme lists: "
+                      + ", ".join(referencing_datasets)
+                      + ". Remove or replace this concept from those datasets first using the Edit Dataset form."
+                  )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "concepts",
+                  "identifier",
+                  [concept_identifier]
+              )
+
+              print(f"Removed concept: {concept_identifier}")
+
+          if is_add_metric:
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              pref_label = extract_field(issue_body, "Preferred label")
+              definition = extract_field(issue_body, "Metric definition")
+              expected_data_type = extract_field(issue_body, "Expected data type")
+              dimension = extract_field(issue_body, "Quality dimension")
+              confirmation = extract_field(issue_body, "Confirm metric addition")
+
+              errors = []
+
+              if not pref_label:
+                  errors.append("Missing required field: Preferred label.")
+
+              if not definition:
+                  errors.append("Missing required field: Metric definition.")
+
+              if not expected_data_type:
+                  errors.append("Missing required field: Expected data type.")
+
+              if not dimension:
+                  errors.append("Missing required field: Quality dimension.")
+
+              if "I confirm that this metric should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm metric addition by ticking the confirmation checkbox.")
+
+              if any(marker in definition for marker in ["identifier:", "prefLabel:", "metrics:", "datasets:"]):
+                  errors.append("Metric definition must be plain text, not YAML. Do not paste a YAML example into the definition field.")
+
+              if pref_label and not metric_identifier:
+                  metric_identifier = f"ex:{slugify(pref_label)}"
+
+              if metric_identifier in metric_ids:
+                  errors.append(f"Metric identifier already exists: {metric_identifier}")
+
+              if errors:
+                  fail(errors)
+
+              metric = {
+                  "identifier": metric_identifier,
+                  "prefLabel": pref_label,
+                  "definition": definition,
+                  "expectedDataType": expected_data_type,
+                  "inDimension": dimension,
+              }
+
+              metric_block = dump_list_item_block(metric)
+              catalog_text = insert_block_into_top_level_section(catalog_text, "metrics", metric_block)
+
+              print(f"Added metric: {metric_identifier}")
+
+          if is_remove_metric:
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm metric removal")
+
+              errors = []
+
+              if not metric_identifier:
+                  errors.append("Missing required field: Metric identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this metric should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm metric removal by ticking the confirmation checkbox.")
+
+              target_metric = None
+
+              for metric in metrics:
+                  if isinstance(metric, dict) and str(metric.get("identifier", "")).strip() == metric_identifier:
+                      target_metric = metric
+                      break
+
+              if target_metric is None:
+                  errors.append(f"Metric identifier not found: {metric_identifier}")
+
+              referencing_quality_measurements = []
+
+              for quality_measurement in quality_measurements:
+                  if not isinstance(quality_measurement, dict):
+                      continue
+
+                  quality_measurement_identifier = str(quality_measurement.get("identifier", "")).strip()
+                  measured_metric = str(quality_measurement.get("isMeasurementOf", "")).strip()
+
+                  if measured_metric == metric_identifier:
+                      referencing_quality_measurements.append(quality_measurement_identifier)
+
+              if referencing_quality_measurements:
+                  errors.append(
+                      "Metric cannot be removed because it is still referenced by quality measurements: "
+                      + ", ".join(referencing_quality_measurements)
+                      + ". Remove or replace those quality measurements first."
+                  )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "metrics",
+                  "identifier",
+                  [metric_identifier]
+              )
+
+              print(f"Removed metric: {metric_identifier}")
+
+          if is_add_quality_measurement:
+              quality_measurement_identifier = extract_field(issue_body, "Quality measurement identifier")
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              quality_measurement_value = extract_field(issue_body, "Quality measurement value")
+              generated_at_time = extract_field(issue_body, "Generated date")
+              confirmation = extract_field(issue_body, "Confirm quality measurement addition")
+
+              errors = []
+
+              if not dataset_identifier:
+                  errors.append("Missing required field: Dataset identifier.")
+
+              if not metric_identifier:
+                  errors.append("Missing required field: Metric identifier.")
+
+              if not quality_measurement_value:
+                  errors.append("Missing required field: Quality measurement value.")
+
+              if "I confirm that this quality measurement should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm quality measurement addition by ticking the confirmation checkbox.")
+
+              require_existing(dataset_identifier, dataset_ids, "Dataset identifier", errors)
+              require_existing(metric_identifier, metric_ids, "Metric identifier", errors)
+
+              if generated_at_time and not looks_like_date(generated_at_time):
+                  errors.append("Generated date must use YYYY-MM-DD format.")
+
+              if not quality_measurement_identifier and dataset_identifier and metric_identifier:
+                  quality_measurement_identifier = (
+                      f"ex:{slug_identifier(dataset_identifier)}-"
+                      f"{slug_identifier(metric_identifier)}-quality-measurement"
+                  )
+
+              if quality_measurement_identifier in quality_measurement_ids:
+                  errors.append(f"Quality measurement identifier already exists: {quality_measurement_identifier}")
+
+              target_metric = None
+
+              for metric in metrics:
+                  if isinstance(metric, dict) and str(metric.get("identifier", "")).strip() == metric_identifier:
+                      target_metric = metric
+                      break
+
+              expected_data_type = ""
+
+              if target_metric is not None:
+                  expected_data_type = str(target_metric.get("expectedDataType", "")).strip()
+
+              parsed_value = quality_measurement_value
+
+              if expected_data_type in {"xsd:float", "float"}:
+                  try:
+                      parsed_value = float(quality_measurement_value)
+                  except ValueError:
+                      errors.append("Quality measurement value must be numeric because the metric expected data type is xsd:float.")
+
+              elif expected_data_type in {"xsd:integer", "integer", "xsd:int", "int"}:
+                  try:
+                      parsed_value = int(quality_measurement_value)
+                  except ValueError:
+                      errors.append("Quality measurement value must be a whole number because the metric expected data type is xsd:integer.")
+
+              elif expected_data_type in {"xsd:boolean", "boolean"}:
+                  value_lower = quality_measurement_value.strip().lower()
+
+                  if value_lower not in {"true", "false"}:
+                      errors.append("Quality measurement value must be true or false because the metric expected data type is xsd:boolean.")
+                  else:
+                      parsed_value = value_lower == "true"
+
+              if errors:
+                  fail(errors)
+
+              quality_measurement = {
+                  "identifier": quality_measurement_identifier,
+                  "computedOn": dataset_identifier,
+                  "isMeasurementOf": metric_identifier,
+                  "value": parsed_value,
+              }
+
+              if generated_at_time:
+                  quality_measurement["generatedAtTime"] = generated_at_time
+
+              quality_measurement_block = dump_list_item_block(quality_measurement)
+              catalog_text = insert_block_into_top_level_section(
+                  catalog_text,
+                  "qualityMeasurements",
+                  quality_measurement_block
+              )
+
+              print(f"Added quality measurement: {quality_measurement_identifier}")
+
+          if is_remove_quality_measurement:
+              quality_measurement_identifier = extract_field(issue_body, "Quality measurement identifier")
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm quality measurement removal")
+
+              errors = []
+
+              if not quality_measurement_identifier:
+                  errors.append("Missing required field: Quality measurement identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this quality measurement should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm quality measurement removal by ticking the confirmation checkbox.")
+
+              target_quality_measurement = None
+
+              for quality_measurement in quality_measurements:
+                  if (
+                      isinstance(quality_measurement, dict)
+                      and str(quality_measurement.get("identifier", "")).strip() == quality_measurement_identifier
+                  ):
+                      target_quality_measurement = quality_measurement
+                      break
+
+              if target_quality_measurement is None:
+                  errors.append(f"Quality measurement identifier not found: {quality_measurement_identifier}")
+
+              if target_quality_measurement is not None:
+                  actual_dataset = str(target_quality_measurement.get("computedOn", "")).strip()
+                  actual_metric = str(target_quality_measurement.get("isMeasurementOf", "")).strip()
+
+                  if dataset_identifier and dataset_identifier != actual_dataset:
+                      errors.append(
+                          f"Dataset identifier does not match the quality measurement. "
+                          f"Expected {actual_dataset}, got {dataset_identifier}."
+                      )
+
+                  if metric_identifier and metric_identifier != actual_metric:
+                      errors.append(
+                          f"Metric identifier does not match the quality measurement. "
+                          f"Expected {actual_metric}, got {metric_identifier}."
+                      )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "qualityMeasurements",
+                  "identifier",
+                  [quality_measurement_identifier]
+              )
+
+              print(f"Removed quality measurement: {quality_measurement_identifier}")
+
+          if is_add_policy:
+              policy_uid = extract_field(issue_body, "Policy UID")
+              title = extract_field(issue_body, "Policy title")
+              description = extract_field(issue_body, "Policy description")
+
+              permission_uid = extract_field(issue_body, "Permission UID")
+              permission_description = extract_field(issue_body, "Permission description")
+              permission_action = extract_field(issue_body, "Permission action")
+              permission_assignees = extract_lines(issue_body, "Permission assignees")
+
+              obligation_uid = extract_field(issue_body, "Obligation UID")
+              obligation_description = extract_field(issue_body, "Obligation description")
+              obligation_action = extract_field(issue_body, "Obligation action")
+              obligation_assignees = extract_lines(issue_body, "Obligation assignees")
+
+              confirmation = extract_field(issue_body, "Confirm policy addition")
+
+              errors = []
+
+              if not title:
+                  errors.append("Missing required field: Policy title.")
+
+              if not description:
+                  errors.append("Missing required field: Policy description.")
+
+              if "I confirm that this policy should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm policy addition by ticking the confirmation checkbox.")
+
+              if any(marker in description for marker in ["uid:", "permission:", "obligation:", "policies:", "datasets:"]):
+                  errors.append("Policy description must be plain text, not YAML. Do not paste a YAML example into the description field.")
+
+              if title and not policy_uid:
+                  policy_uid = f"plcy:{slugify(title)}"
+
+              if policy_uid in policy_uids:
+                  errors.append(f"Policy UID already exists: {policy_uid}")
+
+              permission_fields = [
+                  permission_uid,
+                  permission_description,
+                  permission_action,
+                  "\n".join(permission_assignees),
+              ]
+
+              if any(str(value).strip() for value in permission_fields):
+                  if not permission_uid:
+                      errors.append("Permission UID is required when adding a permission.")
+                  if not permission_description:
+                      errors.append("Permission description is required when adding a permission.")
+                  if not permission_action:
+                      errors.append("Permission action is required when adding a permission.")
+                  if not permission_assignees:
+                      errors.append("At least one Permission assignee is required when adding a permission.")
+
+              obligation_fields = [
+                  obligation_uid,
+                  obligation_description,
+                  obligation_action,
+                  "\n".join(obligation_assignees),
+              ]
+
+              if any(str(value).strip() for value in obligation_fields):
+                  if not obligation_uid:
+                      errors.append("Obligation UID is required when adding an obligation.")
+                  if not obligation_description:
+                      errors.append("Obligation description is required when adding an obligation.")
+                  if not obligation_action:
+                      errors.append("Obligation action is required when adding an obligation.")
+                  if not obligation_assignees:
+                      errors.append("At least one Obligation assignee is required when adding an obligation.")
+
+              if errors:
+                  fail(errors)
+
+              policy = {
+                  "uid": policy_uid,
+                  "title": title,
+                  "description": description,
+              }
+
+              if any(str(value).strip() for value in permission_fields):
+                  policy["permission"] = [
+                      {
+                          "uid": permission_uid,
+                          "description": permission_description,
+                          "action": permission_action,
+                          "assignee": permission_assignees,
+                      }
+                  ]
+
+              if any(str(value).strip() for value in obligation_fields):
+                  policy["obligation"] = [
+                      {
+                          "uid": obligation_uid,
+                          "description": obligation_description,
+                          "action": obligation_action,
+                          "assignee": obligation_assignees,
+                      }
+                  ]
+
+              policy_block = dump_list_item_block(policy)
+              catalog_text = insert_block_into_top_level_section(
+                  catalog_text,
+                  "policies",
+                  policy_block
+              )
+
+              print(f"Added policy: {policy_uid}")
+
+          if is_remove_policy:
+              policy_uid = extract_field(issue_body, "Policy UID")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm policy removal")
+
+              errors = []
+
+              if not policy_uid:
+                  errors.append("Missing required field: Policy UID.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this policy should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm policy removal by ticking the confirmation checkbox.")
+
+              target_policy = None
+
+              for policy in policies:
+                  if isinstance(policy, dict) and str(policy.get("uid", "")).strip() == policy_uid:
+                      target_policy = policy
+                      break
+
+              if target_policy is None:
+                  errors.append(f"Policy UID not found: {policy_uid}")
+
+              referencing_datasets = []
+
+              for dataset in datasets:
+                  if not isinstance(dataset, dict):
+                      continue
+
+                  dataset_identifier = str(dataset.get("identifier", "")).strip()
+                  dataset_title = str(dataset.get("title", "")).strip()
+                  dataset_policy = str(dataset.get("hasPolicy", "")).strip()
+
+                  if dataset_policy == policy_uid:
+                      if dataset_title:
+                          referencing_datasets.append(f"{dataset_identifier} ({dataset_title})")
+                      else:
+                          referencing_datasets.append(dataset_identifier)
+
+              if referencing_datasets:
+                  errors.append(
+                      "Policy cannot be removed because it is still referenced by datasets: "
+                      + ", ".join(referencing_datasets)
+                      + ". Remove or replace this policy from those datasets first using the Edit Dataset form."
+                  )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "policies",
+                  "uid",
+                  [policy_uid]
+              )
+
+              print(f"Removed policy: {policy_uid}")
+
+          CATALOG_PATH.write_text(catalog_text, encoding="utf-8")
+
+          try:
+              yaml.safe_load(CATALOG_PATH.read_text(encoding="utf-8"))
+          except Exception as exc:
+              fail(f"Updated YAML is invalid: {exc}")
+          PY
+
+      - name: Comment on validation or update failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+
+            let body = "Catalog intake failed. Check the Actions logs for the exact reason.";
+
+            if (fs.existsSync("validation_errors.md")) {
+              body = fs.readFileSync("validation_errors.md", "utf8");
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body
+            });
+
+      - name: Remove temporary files
+        if: always()
+        run: |
+          rm -f issue.txt validation_errors.md
+
+      - name: Show pending changes
+        if: success()
+        run: |
+          echo "=== git status --short --untracked-files=all ==="
+          git status --short --untracked-files=all
+          echo ""
+          echo "=== git diff -- data-catalog/data-catalog.yaml ==="
+          git diff -- data-catalog/data-catalog.yaml
+
+      - name: Create Pull Request
+        if: success()
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          add-paths: |
+            data-catalog/data-catalog.yaml
+          commit-message: "Catalog intake: issue #${{ github.event.issue.number }}"
+          branch: "catalog-intake/${{ github.event.issue.number }}"
+          branch-suffix: timestamp
+          delete-branch: true
+          title: "Catalog intake: issue #${{ github.event.issue.number }}"
+          body: |
+            This PR was automatically generated from issue #${{ github.event.issue.number }}.
+
+            - Labels: `${{ join(github.event.issue.labels.*.name, ', ') }}`
+            - Source issue: #${{ github.event.issue.number }}
+
+            After merge to `main`, the Pages deployment workflow will rebuild and publish the static catalog site.
+          labels: "catalog-intake-pr"
