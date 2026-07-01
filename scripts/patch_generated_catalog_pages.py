@@ -12,6 +12,10 @@ METRIC_PAGES_DIR = Path("modules/metric/pages")
 POLICY_PAGES_DIR = Path("modules/policy/pages")
 
 
+METRIC_USAGE_START = "// BEGIN GENERATED METRIC USAGE"
+METRIC_USAGE_END = "// END GENERATED METRIC USAGE"
+
+
 def slug_from_identifier(identifier: str) -> str:
     """
     Convert a CURIE-like identifier into the generated page filename stem.
@@ -104,6 +108,193 @@ def insert_identifier_into_dataset_overview(page_text: str, identifier: str) -> 
     insert_position = overview_match.end()
 
     return page_text[:insert_position] + insert_text + page_text[insert_position:]
+
+
+def remove_existing_metric_usage_sections(page_text: str) -> str:
+    """
+    Remove usage sections generated either by this script or by the upstream generator.
+
+    The upstream generator currently creates a simple section like:
+
+      Datasets with quality measurements using this metric:
+
+      [cols="1"]
+      |===
+      ...
+      |===
+
+    This script replaces that with a richer table.
+    """
+    text = page_text
+
+    generated_block_pattern = re.compile(
+        rf"\n?{re.escape(METRIC_USAGE_START)}.*?{re.escape(METRIC_USAGE_END)}\n?",
+        flags=re.DOTALL,
+    )
+    text = generated_block_pattern.sub("\n", text).rstrip() + "\n"
+
+    upstream_table_pattern = re.compile(
+        r"\n?Datasets with quality measurements using this metric:\s*\n+"
+        r"\[cols=\"1\"\]\s*\n"
+        r"\|===.*?\|===\s*",
+        flags=re.DOTALL,
+    )
+    text = upstream_table_pattern.sub("\n", text).rstrip() + "\n"
+
+    upstream_empty_pattern = re.compile(
+        r"\n?No datasets found with quality measurements using this metric\.\s*",
+        flags=re.DOTALL,
+    )
+    text = upstream_empty_pattern.sub("\n", text).rstrip() + "\n"
+
+    return text.rstrip() + "\n"
+
+
+def build_metric_usage_lookup(catalog: dict) -> dict:
+    """
+    Build lookup:
+
+      metric identifier -> list of usage rows
+
+    Each usage row contains:
+      dataset title
+      dataset identifier
+      dataset page stem
+      quality measurement identifier
+      value
+      generated date
+    """
+    datasets = catalog.get("datasets") or []
+    metrics = catalog.get("metrics") or []
+    quality_measurements = catalog.get("qualityMeasurements") or []
+
+    dataset_lookup = {}
+
+    for dataset in datasets:
+        if not isinstance(dataset, dict):
+            continue
+
+        dataset_identifier = str(dataset.get("identifier", "")).strip()
+
+        if not dataset_identifier:
+            continue
+
+        dataset_lookup[dataset_identifier] = {
+            "title": str(dataset.get("title", dataset_identifier)).strip(),
+            "page": slug_from_identifier(dataset_identifier),
+        }
+
+    metric_usage = {}
+
+    for metric in metrics:
+        if not isinstance(metric, dict):
+            continue
+
+        metric_identifier = str(metric.get("identifier", "")).strip()
+
+        if metric_identifier:
+            metric_usage[metric_identifier] = []
+
+    for quality_measurement in quality_measurements:
+        if not isinstance(quality_measurement, dict):
+            continue
+
+        metric_identifier = str(quality_measurement.get("isMeasurementOf", "")).strip()
+        dataset_identifier = str(quality_measurement.get("computedOn", "")).strip()
+
+        if not metric_identifier or not dataset_identifier:
+            continue
+
+        if metric_identifier not in metric_usage:
+            continue
+
+        dataset_info = dataset_lookup.get(
+            dataset_identifier,
+            {
+                "title": dataset_identifier,
+                "page": slug_from_identifier(dataset_identifier),
+            },
+        )
+
+        usage = {
+            "dataset_title": dataset_info["title"],
+            "dataset_identifier": dataset_identifier,
+            "dataset_page": dataset_info["page"],
+            "quality_measurement_identifier": str(
+                quality_measurement.get("identifier", "")
+            ).strip(),
+            "value": quality_measurement.get("value", "—"),
+            "generated_at_time": quality_measurement.get("generatedAtTime", ""),
+        }
+
+        metric_usage[metric_identifier].append(usage)
+
+    return metric_usage
+
+
+def build_metric_usage_block(metric_identifier: str, usages: list[dict]) -> str:
+    block_lines = [
+        METRIC_USAGE_START,
+        "",
+        "== Quality measurement usage",
+        "",
+    ]
+
+    if not usages:
+        block_lines.extend(
+            [
+                "No datasets found with quality measurements using this metric.",
+                "",
+                METRIC_USAGE_END,
+                "",
+            ]
+        )
+        return "\n".join(block_lines)
+
+    block_lines.extend(
+        [
+            '[cols="2,2,2,1,1"]',
+            "|===",
+            "a| Dataset",
+            "a| Dataset identifier",
+            "a| Quality measurement identifier",
+            "a| Value",
+            "a| Generated date",
+            "",
+        ]
+    )
+
+    for usage in usages:
+        dataset_title = usage["dataset_title"]
+        dataset_identifier = usage["dataset_identifier"]
+        dataset_page = usage["dataset_page"]
+        quality_measurement_identifier = usage["quality_measurement_identifier"]
+        value = usage["value"]
+        generated_at_time = usage["generated_at_time"]
+
+        dataset_link = f"xref:dataset:{dataset_page}.adoc[{dataset_title}]"
+
+        block_lines.extend(
+            [
+                f"a| {dataset_link}",
+                f"a| `{dataset_identifier}`",
+                f"a| `{quality_measurement_identifier or '—'}`",
+                f"a| {value}",
+                f"a| {generated_at_time or '—'}",
+                "",
+            ]
+        )
+
+    block_lines.extend(
+        [
+            "|===",
+            "",
+            METRIC_USAGE_END,
+            "",
+        ]
+    )
+
+    return "\n".join(block_lines)
 
 
 def patch_dataset_pages(catalog: dict) -> int:
@@ -213,6 +404,8 @@ def patch_metric_pages(catalog: dict) -> int:
         print(f"Metric pages directory not found: {METRIC_PAGES_DIR}", file=sys.stderr)
         return 1
 
+    metric_usage = build_metric_usage_lookup(catalog)
+
     updated_count = 0
     missing_pages = []
 
@@ -233,7 +426,17 @@ def patch_metric_pages(catalog: dict) -> int:
             continue
 
         original_text = read_text_fallback(page_path)
-        updated_text = insert_after_page_title(original_text, f"Identifier: `{identifier}`")
+
+        updated_text = original_text
+        updated_text = insert_after_page_title(updated_text, f"Identifier: `{identifier}`")
+        updated_text = remove_existing_metric_usage_sections(updated_text)
+
+        usage_block = build_metric_usage_block(
+            identifier,
+            metric_usage.get(identifier, []),
+        )
+
+        updated_text = updated_text.rstrip() + "\n\n" + usage_block
 
         if updated_text != original_text:
             write_text_utf8(page_path, updated_text)
