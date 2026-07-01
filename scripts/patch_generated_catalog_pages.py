@@ -1,4 +1,4 @@
-﻿from pathlib import Path
+from pathlib import Path
 import re
 import sys
 import yaml
@@ -10,6 +10,7 @@ DATASET_PAGES_DIR = Path("modules/dataset/pages")
 CONCEPT_PAGES_DIR = Path("modules/concept/pages")
 METRIC_PAGES_DIR = Path("modules/metric/pages")
 POLICY_PAGES_DIR = Path("modules/policy/pages")
+DATA_CATALOG_NAV_PATH = Path("modules/data-catalog/nav.adoc")
 
 
 METRIC_USAGE_START = "// BEGIN GENERATED METRIC USAGE"
@@ -501,6 +502,56 @@ def patch_policy_pages(catalog: dict) -> int:
     return 0
 
 
+def deduplicate_policy_nav_entries() -> int:
+    """
+    Remove duplicate policy navigation entries from modules/data-catalog/nav.adoc.
+
+    The upstream generator currently appears to append the full policy list once
+    for each policy, causing each policy to appear multiple times in the sidebar.
+
+    This function keeps the first occurrence of each policy xref and removes
+    repeated occurrences.
+    """
+    if not DATA_CATALOG_NAV_PATH.exists():
+        print(f"Data catalog nav file not found: {DATA_CATALOG_NAV_PATH}", file=sys.stderr)
+        return 1
+
+    original_text = read_text_fallback(DATA_CATALOG_NAV_PATH)
+    lines = original_text.splitlines()
+
+    seen_policy_xrefs = set()
+    updated_lines = []
+    removed_count = 0
+
+    policy_xref_pattern = re.compile(
+        r"^\s*\*+\s+xref:policy:([^.\]]+)\.adoc\[[^\]]+\]\s*$"
+    )
+
+    for line in lines:
+        match = policy_xref_pattern.match(line)
+
+        if match:
+            policy_page = match.group(1)
+
+            if policy_page in seen_policy_xrefs:
+                removed_count += 1
+                continue
+
+            seen_policy_xrefs.add(policy_page)
+
+        updated_lines.append(line)
+
+    updated_text = "\n".join(updated_lines).rstrip() + "\n"
+
+    if updated_text != original_text:
+        write_text_utf8(DATA_CATALOG_NAV_PATH, updated_text)
+        print(f"Removed duplicate policy nav entries: {removed_count}")
+    else:
+        print("Removed duplicate policy nav entries: 0")
+
+    return 0
+
+
 def main() -> int:
     if not CATALOG_PATH.exists():
         print(f"Catalog file not found: {CATALOG_PATH}", file=sys.stderr)
@@ -514,6 +565,7 @@ def main() -> int:
     exit_code = max(exit_code, patch_concept_pages(catalog))
     exit_code = max(exit_code, patch_metric_pages(catalog))
     exit_code = max(exit_code, patch_policy_pages(catalog))
+    exit_code = max(exit_code, deduplicate_policy_nav_entries())
 
     return exit_code
 
