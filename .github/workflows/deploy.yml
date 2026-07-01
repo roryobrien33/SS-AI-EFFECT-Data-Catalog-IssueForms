@@ -32,7 +32,6 @@ jobs:
         with:
           python-version: "3.12.7"
 
-      # ✅ Cache Python dependencies (uv)
       - name: Cache uv
         uses: actions/cache@v4
         with:
@@ -44,7 +43,6 @@ jobs:
       - name: Install uv 0.7.8
         run: curl -LsSf https://astral.sh/uv/0.7.8/install.sh | sh
 
-      # ✅ Auto-handle lockfile (no user action required)
       - name: Sync Python dependencies
         run: |
           uv sync --no-dev --no-install-project --locked || (
@@ -58,7 +56,6 @@ jobs:
           chmod +x scripts/generate-datacatalog.sh
           ./scripts/generate-datacatalog.sh
 
-      # ✅ SIMPLE node setup (no cache → avoids error)
       - name: Install Node.js
         uses: actions/setup-node@v5
         with:
@@ -66,6 +63,9 @@ jobs:
 
       - name: Install Antora with extensions
         run: npm install antora @antora/lunr-extension @sntke/antora-mermaid-extension
+
+      - name: Clean generated site output
+        run: rm -rf docs
 
       - name: Generate Site
         run: npx antora antora-playbook.yml
