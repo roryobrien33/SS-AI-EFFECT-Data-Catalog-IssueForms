@@ -1,0 +1,145 @@
+name: Add Policy
+description: Submit a request to add a new policy to the AI-EFFECT data catalog
+title: "[ADD POLICY] "
+labels:
+  - add-policy
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add Policy
+
+        Use this form to add a new policy to the AI-EFFECT data catalog.
+
+        Policies can be referenced by datasets using the `hasPolicy` field.
+
+        Example:
+
+        ```yaml
+        policies:
+          - uid: plcy:open-information
+            title: Open Information Policy
+            description: Data classified as Open Information is freely available.
+        ```
+
+        This first version supports the core policy metadata and one optional permission and one optional obligation.
+
+  - type: input
+    id: uid
+    attributes:
+      label: Policy UID
+      description: Unique policy UID. If left blank, one will be generated from the policy title.
+      placeholder: plcy:open-information
+    validations:
+      required: false
+
+  - type: input
+    id: title
+    attributes:
+      label: Policy title
+      description: Human-readable title for the policy.
+      placeholder: Open Information Policy
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Policy description
+      description: Plain text description of the policy.
+      placeholder: Data classified as Open Information is intended to be freely available and accessible without restrictions.
+    validations:
+      required: true
+
+  - type: input
+    id: permission_uid
+    attributes:
+      label: Permission UID
+      description: Optional UID for one permission rule.
+      placeholder: plcy:open-info-access
+    validations:
+      required: false
+
+  - type: textarea
+    id: permission_description
+    attributes:
+      label: Permission description
+      description: Optional plain text description of the permission.
+      placeholder: Allows any consumer to access the data without restriction.
+    validations:
+      required: false
+
+  - type: input
+    id: permission_action
+    attributes:
+      label: Permission action
+      description: Optional action allowed by the permission.
+      placeholder: access
+    validations:
+      required: false
+
+  - type: textarea
+    id: permission_assignees
+    attributes:
+      label: Permission assignees
+      description: Optional. One assignee per line.
+      placeholder: |
+        Data Consumer
+    validations:
+      required: false
+
+  - type: input
+    id: obligation_uid
+    attributes:
+      label: Obligation UID
+      description: Optional UID for one obligation rule.
+      placeholder: plcy:open-register
+    validations:
+      required: false
+
+  - type: textarea
+    id: obligation_description
+    attributes:
+      label: Obligation description
+      description: Optional plain text description of the obligation.
+      placeholder: The creator or owner must register the information in an indexed catalog so consumers can find it.
+    validations:
+      required: false
+
+  - type: input
+    id: obligation_action
+    attributes:
+      label: Obligation action
+      description: Optional action required by the obligation.
+      placeholder: register
+    validations:
+      required: false
+
+  - type: textarea
+    id: obligation_assignees
+    attributes:
+      label: Obligation assignees
+      description: Optional. One assignee per line.
+      placeholder: |
+        Data Provider
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm policy addition
+      description: Confirm that this policy should be added to the catalog.
+      options:
+        - label: I confirm that this policy should be added to the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
