@@ -19,6 +19,8 @@ jobs:
       contains(github.event.issue.labels.*.name, 'remove-concept') ||
       contains(github.event.issue.labels.*.name, 'add-metric') ||
       contains(github.event.issue.labels.*.name, 'remove-metric') ||
+      contains(github.event.issue.labels.*.name, 'add-quality-measurement') ||
+      contains(github.event.issue.labels.*.name, 'remove-quality-measurement') ||
       (
         contains(github.event.issue.body, '### Dataset identifier') &&
         contains(github.event.issue.body, '### Dataset title') &&
@@ -52,6 +54,17 @@ jobs:
         contains(github.event.issue.body, '### Metric identifier') &&
         contains(github.event.issue.body, '### Reason for removal') &&
         contains(github.event.issue.body, '### Confirm metric removal')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Dataset identifier') &&
+        contains(github.event.issue.body, '### Metric identifier') &&
+        contains(github.event.issue.body, '### Quality measurement value') &&
+        contains(github.event.issue.body, '### Confirm quality measurement addition')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Quality measurement identifier') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm quality measurement removal')
       )
 
     runs-on: ubuntu-latest
@@ -95,6 +108,8 @@ jobs:
           IS_REMOVE_CONCEPT: ${{ contains(github.event.issue.labels.*.name, 'remove-concept') }}
           IS_ADD_METRIC: ${{ contains(github.event.issue.labels.*.name, 'add-metric') }}
           IS_REMOVE_METRIC: ${{ contains(github.event.issue.labels.*.name, 'remove-metric') }}
+          IS_ADD_QUALITY_MEASUREMENT: ${{ contains(github.event.issue.labels.*.name, 'add-quality-measurement') }}
+          IS_REMOVE_QUALITY_MEASUREMENT: ${{ contains(github.event.issue.labels.*.name, 'remove-quality-measurement') }}
         run: |
           python - <<'PY'
           import copy
@@ -180,6 +195,19 @@ jobs:
               value = str(value or "").lower().strip()
               value = re.sub(r"[^a-z0-9]+", "-", value)
               value = re.sub(r"-+", "-", value).strip("-")
+              return value or "item"
+
+
+          def slug_identifier(value):
+              value = str(value or "").strip()
+
+              if ":" in value:
+                  value = value.split(":", 1)[1]
+
+              value = value.lower()
+              value = re.sub(r"[^a-z0-9]+", "-", value)
+              value = re.sub(r"-+", "-", value).strip("-")
+
               return value or "item"
 
 
@@ -506,6 +534,8 @@ jobs:
           is_remove_concept = str(os.environ.get("IS_REMOVE_CONCEPT", "")).lower() == "true"
           is_add_metric = str(os.environ.get("IS_ADD_METRIC", "")).lower() == "true"
           is_remove_metric = str(os.environ.get("IS_REMOVE_METRIC", "")).lower() == "true"
+          is_add_quality_measurement = str(os.environ.get("IS_ADD_QUALITY_MEASUREMENT", "")).lower() == "true"
+          is_remove_quality_measurement = str(os.environ.get("IS_REMOVE_QUALITY_MEASUREMENT", "")).lower() == "true"
 
           if (
               not is_add_dataset
@@ -515,6 +545,8 @@ jobs:
               and not is_remove_concept
               and not is_add_metric
               and not is_remove_metric
+              and not is_add_quality_measurement
+              and not is_remove_quality_measurement
           ):
               if "### Dataset title" in issue_body and "### Dataset description" in issue_body:
                   is_add_dataset = True
@@ -530,6 +562,10 @@ jobs:
                   is_add_metric = True
               elif "### Confirm metric removal" in issue_body and "### Metric identifier" in issue_body:
                   is_remove_metric = True
+              elif "### Confirm quality measurement addition" in issue_body and "### Quality measurement value" in issue_body:
+                  is_add_quality_measurement = True
+              elif "### Confirm quality measurement removal" in issue_body and "### Quality measurement identifier" in issue_body:
+                  is_remove_quality_measurement = True
 
           active_modes = [
               is_add_dataset,
@@ -539,6 +575,8 @@ jobs:
               is_remove_concept,
               is_add_metric,
               is_remove_metric,
+              is_add_quality_measurement,
+              is_remove_quality_measurement,
           ]
 
           if sum(1 for mode in active_modes if mode) > 1:
@@ -1141,6 +1179,158 @@ jobs:
               )
 
               print(f"Removed metric: {metric_identifier}")
+
+          if is_add_quality_measurement:
+              quality_measurement_identifier = extract_field(issue_body, "Quality measurement identifier")
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              quality_measurement_value = extract_field(issue_body, "Quality measurement value")
+              generated_at_time = extract_field(issue_body, "Generated date")
+              confirmation = extract_field(issue_body, "Confirm quality measurement addition")
+
+              errors = []
+
+              if not dataset_identifier:
+                  errors.append("Missing required field: Dataset identifier.")
+
+              if not metric_identifier:
+                  errors.append("Missing required field: Metric identifier.")
+
+              if not quality_measurement_value:
+                  errors.append("Missing required field: Quality measurement value.")
+
+              if "I confirm that this quality measurement should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm quality measurement addition by ticking the confirmation checkbox.")
+
+              require_existing(dataset_identifier, dataset_ids, "Dataset identifier", errors)
+              require_existing(metric_identifier, metric_ids, "Metric identifier", errors)
+
+              if generated_at_time and not looks_like_date(generated_at_time):
+                  errors.append("Generated date must use YYYY-MM-DD format.")
+
+              if not quality_measurement_identifier and dataset_identifier and metric_identifier:
+                  quality_measurement_identifier = (
+                      f"ex:{slug_identifier(dataset_identifier)}-"
+                      f"{slug_identifier(metric_identifier)}-quality-measurement"
+                  )
+
+              if quality_measurement_identifier in quality_measurement_ids:
+                  errors.append(f"Quality measurement identifier already exists: {quality_measurement_identifier}")
+
+              target_metric = None
+
+              for metric in metrics:
+                  if isinstance(metric, dict) and str(metric.get("identifier", "")).strip() == metric_identifier:
+                      target_metric = metric
+                      break
+
+              expected_data_type = ""
+
+              if target_metric is not None:
+                  expected_data_type = str(target_metric.get("expectedDataType", "")).strip()
+
+              parsed_value = quality_measurement_value
+
+              if expected_data_type in {"xsd:float", "float"}:
+                  try:
+                      parsed_value = float(quality_measurement_value)
+                  except ValueError:
+                      errors.append("Quality measurement value must be numeric because the metric expected data type is xsd:float.")
+
+              elif expected_data_type in {"xsd:integer", "integer", "xsd:int", "int"}:
+                  try:
+                      parsed_value = int(quality_measurement_value)
+                  except ValueError:
+                      errors.append("Quality measurement value must be a whole number because the metric expected data type is xsd:integer.")
+
+              elif expected_data_type in {"xsd:boolean", "boolean"}:
+                  value_lower = quality_measurement_value.strip().lower()
+
+                  if value_lower not in {"true", "false"}:
+                      errors.append("Quality measurement value must be true or false because the metric expected data type is xsd:boolean.")
+                  else:
+                      parsed_value = value_lower == "true"
+
+              if errors:
+                  fail(errors)
+
+              quality_measurement = {
+                  "identifier": quality_measurement_identifier,
+                  "computedOn": dataset_identifier,
+                  "isMeasurementOf": metric_identifier,
+                  "value": parsed_value,
+              }
+
+              if generated_at_time:
+                  quality_measurement["generatedAtTime"] = generated_at_time
+
+              quality_measurement_block = dump_list_item_block(quality_measurement)
+              catalog_text = insert_block_into_top_level_section(
+                  catalog_text,
+                  "qualityMeasurements",
+                  quality_measurement_block
+              )
+
+              print(f"Added quality measurement: {quality_measurement_identifier}")
+
+          if is_remove_quality_measurement:
+              quality_measurement_identifier = extract_field(issue_body, "Quality measurement identifier")
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm quality measurement removal")
+
+              errors = []
+
+              if not quality_measurement_identifier:
+                  errors.append("Missing required field: Quality measurement identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this quality measurement should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm quality measurement removal by ticking the confirmation checkbox.")
+
+              target_quality_measurement = None
+
+              for quality_measurement in quality_measurements:
+                  if (
+                      isinstance(quality_measurement, dict)
+                      and str(quality_measurement.get("identifier", "")).strip() == quality_measurement_identifier
+                  ):
+                      target_quality_measurement = quality_measurement
+                      break
+
+              if target_quality_measurement is None:
+                  errors.append(f"Quality measurement identifier not found: {quality_measurement_identifier}")
+
+              if target_quality_measurement is not None:
+                  actual_dataset = str(target_quality_measurement.get("computedOn", "")).strip()
+                  actual_metric = str(target_quality_measurement.get("isMeasurementOf", "")).strip()
+
+                  if dataset_identifier and dataset_identifier != actual_dataset:
+                      errors.append(
+                          f"Dataset identifier does not match the quality measurement. "
+                          f"Expected {actual_dataset}, got {dataset_identifier}."
+                      )
+
+                  if metric_identifier and metric_identifier != actual_metric:
+                      errors.append(
+                          f"Metric identifier does not match the quality measurement. "
+                          f"Expected {actual_metric}, got {metric_identifier}."
+                      )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "qualityMeasurements",
+                  "identifier",
+                  [quality_measurement_identifier]
+              )
+
+              print(f"Removed quality measurement: {quality_measurement_identifier}")
 
           CATALOG_PATH.write_text(catalog_text, encoding="utf-8")
 
