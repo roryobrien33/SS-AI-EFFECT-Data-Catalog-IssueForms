@@ -10,4 +10,4 @@ uv run linkml-convert \
 
 uv run python -m simple_data_catalog_generator.create_data_catalog
 
-uv run python scripts/add_dataset_identifiers_to_pages.py
+uv run python scripts/patch_generated_catalog_pages.py
