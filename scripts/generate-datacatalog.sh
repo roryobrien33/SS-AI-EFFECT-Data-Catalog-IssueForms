@@ -9,7 +9,7 @@ uv run linkml-convert \
     data-catalog/data-catalog.yaml
 
 # Clean generated catalog pages and navigation before regenerating.
-# This prevents stale pages and duplicated sidebar entries.
+# This prevents stale pages, stale navigation entries, and duplicated sidebar entries.
 rm -rf modules/data-catalog/pages
 rm -rf modules/dataset/pages
 rm -rf modules/dataset-series/pages
