@@ -1,0 +1,66 @@
+name: Remove Policy
+description: Submit a request to remove an existing policy from the AI-EFFECT data catalog
+title: "[REMOVE POLICY] "
+labels:
+  - remove-policy
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Remove Policy
+
+        Use this form to request removal of an existing policy from the AI-EFFECT data catalog.
+
+        Policies may be referenced by datasets using the `hasPolicy` field.
+
+        The workflow will block removal if the policy is still referenced by one or more datasets. This prevents broken dataset policy links.
+
+        Before removing a policy, either:
+        - remove the policy from all datasets using the Edit Dataset form, or
+        - replace it with another existing policy using the Edit Dataset form.
+
+  - type: input
+    id: uid
+    attributes:
+      label: Policy UID
+      description: Existing policy UID to remove.
+      placeholder: plcy:open-information
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Policy title
+      description: Optional human-readable title, used only for reviewer confirmation.
+      placeholder: Open Information Policy
+    validations:
+      required: false
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for removal
+      description: Explain why this policy should be removed.
+      placeholder: This policy was added in error or is no longer needed.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm policy removal
+      description: Confirm that this policy should be removed from the catalog.
+      options:
+        - label: I confirm that this policy should be removed from the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
