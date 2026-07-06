@@ -1,0 +1,77 @@
+name: Remove Lineage Link
+description: Submit a request to remove a dataset lineage relationship from the AI-EFFECT data catalog
+title: "[REMOVE LINEAGE LINK] "
+labels:
+  - remove-lineage-link
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Remove Lineage Link
+
+        Use this form to remove an existing lineage relationship between two datasets.
+
+        This removes one `wasDerivedFrom` relationship from the target dataset.
+
+        Example:
+
+        ```yaml
+        datasets:
+          - identifier: ex:uc1-ai-system
+            wasDerivedFrom:
+              - ex:uc1-training-dataset
+        ```
+
+        Removing the lineage link means:
+
+        ```text
+        ex:uc1-ai-system is no longer recorded as derived from ex:uc1-training-dataset
+        ```
+
+        This will not remove either dataset from the catalog. It only removes the lineage relationship between them.
+
+  - type: input
+    id: target_dataset_identifier
+    attributes:
+      label: Target dataset identifier
+      description: Existing dataset that currently has the lineage relationship.
+      placeholder: ex:uc1-ai-system
+    validations:
+      required: true
+
+  - type: input
+    id: source_dataset_identifier
+    attributes:
+      label: Source / input dataset identifier
+      description: Existing source/input dataset to remove from the target dataset's lineage list.
+      placeholder: ex:uc1-training-dataset
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for removal
+      description: Explain why this lineage relationship should be removed.
+      placeholder: This lineage link was added in error or no longer represents the dataset relationship.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm lineage link removal
+      description: Confirm that this lineage relationship should be removed from the catalog.
+      options:
+        - label: I confirm that this lineage link should be removed from the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
