@@ -1,0 +1,86 @@
+name: Add Lineage Link
+description: Submit a request to add a dataset lineage relationship to the AI-EFFECT data catalog
+title: "[ADD LINEAGE LINK] "
+labels:
+  - add-lineage-link
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add Lineage Link
+
+        Use this form to add a lineage relationship between two existing datasets.
+
+        This adds a `wasDerivedFrom` relationship to the target dataset.
+
+        Example:
+
+        ```yaml
+        datasets:
+          - identifier: ex:uc1-ai-system
+            wasDerivedFrom:
+              - ex:uc1-training-dataset
+        ```
+
+        This means:
+
+        ```text
+        ex:uc1-ai-system was derived from ex:uc1-training-dataset
+        ```
+
+        On the webpage, this should appear as:
+
+        ```text
+        Source dataset → Target dataset
+        ```
+
+        Before submitting this form, make sure:
+        - the target dataset already exists
+        - the source/input dataset already exists
+        - the target and source are not the same dataset
+
+  - type: input
+    id: target_dataset_identifier
+    attributes:
+      label: Target dataset identifier
+      description: Existing dataset that is derived from another dataset.
+      placeholder: ex:uc1-ai-system
+    validations:
+      required: true
+
+  - type: input
+    id: source_dataset_identifier
+    attributes:
+      label: Source / input dataset identifier
+      description: Existing dataset that the target dataset was derived from.
+      placeholder: ex:uc1-training-dataset
+    validations:
+      required: true
+
+  - type: textarea
+    id: lineage_context
+    attributes:
+      label: Lineage context
+      description: Optional explanation of why this lineage relationship exists. This will not be added to the catalog yet, but helps reviewers understand the request.
+      placeholder: The AI system was trained using this training dataset.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirm lineage link addition
+      description: Confirm that this lineage relationship should be added to the catalog.
+      options:
+        - label: I confirm that this lineage link should be added to the catalog.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Optional maintainer notes. These will not appear on the generated webpage.
+      placeholder: Any extra context for reviewers.
+    validations:
+      required: false
