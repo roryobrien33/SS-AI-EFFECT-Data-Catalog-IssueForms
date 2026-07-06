@@ -41,8 +41,6 @@ def slug_from_identifier(identifier: str) -> str:
 def read_text_fallback(path: Path) -> str:
     """
     Read generated .adoc files robustly.
-
-    Some generated files may contain Windows-encoded characters.
     Try UTF-8 first, then fall back to Windows-1252.
     """
     try:
@@ -58,12 +56,6 @@ def write_text_utf8(path: Path, text: str) -> None:
 def insert_after_page_title(page_text: str, line_to_insert: str) -> str:
     """
     Insert a line immediately after the AsciiDoc page title.
-
-    Example:
-
-      = forecast data
-
-      Identifier: `ex:forecast-data`
     """
     if line_to_insert in page_text:
         return page_text
@@ -82,22 +74,12 @@ def insert_after_page_title(page_text: str, line_to_insert: str) -> str:
 def insert_identifier_into_dataset_overview(page_text: str, identifier: str) -> str:
     """
     Insert dataset identifier into the existing dataset Overview table.
-
-    Expected generated pattern:
-
-      == Overview
-
-      [cols="1,1"]
-      |===
-      a| Title
-      a| ...
-      |===
     """
     if f"a| {identifier}" in page_text and "a| Identifier" in page_text:
         return page_text
 
     overview_match = re.search(
-        r"(== Overview\s*\n\s*\[cols=\"1,1\"\]\s*\n\s*\|===\s*\n)",
+        r'(== Overview\s*\n\s*\[cols="1,1"\]\s*\n\s*\|===\s*\n)',
         page_text,
         flags=re.MULTILINE,
     )
@@ -114,17 +96,6 @@ def insert_identifier_into_dataset_overview(page_text: str, identifier: str) -> 
 def remove_existing_metric_usage_sections(page_text: str) -> str:
     """
     Remove usage sections generated either by this script or by the upstream generator.
-
-    The upstream generator currently creates a simple section like:
-
-      Datasets with quality measurements using this metric:
-
-      [cols="1"]
-      |===
-      ...
-      |===
-
-    This script replaces that with a richer table.
     """
     text = page_text
 
@@ -135,8 +106,8 @@ def remove_existing_metric_usage_sections(page_text: str) -> str:
     text = generated_block_pattern.sub("\n", text).rstrip() + "\n"
 
     upstream_table_pattern = re.compile(
-        r"\n?Datasets with quality measurements using this metric:\s*\n+"
-        r"\[cols=\"1\"\]\s*\n"
+        r'\n?Datasets with quality measurements using this metric:\s*\n+'
+        r'\[cols="1"\]\s*\n'
         r"\|===.*?\|===\s*",
         flags=re.DOTALL,
     )
@@ -154,16 +125,7 @@ def remove_existing_metric_usage_sections(page_text: str) -> str:
 def build_metric_usage_lookup(catalog: dict) -> dict:
     """
     Build lookup:
-
       metric identifier -> list of usage rows
-
-    Each usage row contains:
-      dataset title
-      dataset identifier
-      dataset page stem
-      quality measurement identifier
-      value
-      generated date
     """
     datasets = catalog.get("datasets") or []
     metrics = catalog.get("metrics") or []
@@ -505,12 +467,6 @@ def patch_policy_pages(catalog: dict) -> int:
 def deduplicate_policy_nav_entries() -> int:
     """
     Remove duplicate policy navigation entries from modules/data-catalog/nav.adoc.
-
-    The upstream generator currently appears to append the full policy list once
-    for each policy, causing each policy to appear multiple times in the sidebar.
-
-    This function keeps the first occurrence of each policy xref and removes
-    repeated occurrences.
     """
     if not DATA_CATALOG_NAV_PATH.exists():
         print(f"Data catalog nav file not found: {DATA_CATALOG_NAV_PATH}", file=sys.stderr)
@@ -552,6 +508,71 @@ def deduplicate_policy_nav_entries() -> int:
     return 0
 
 
+def patch_lineage_mermaid_arrows() -> int:
+    """
+    Reverse lineage arrows in generated dataset Mermaid diagrams.
+
+    The upstream generator currently renders:
+
+        derived_dataset --> source_dataset
+
+    for:
+
+        derived_dataset wasDerivedFrom source_dataset
+
+    This patch changes the visual direction to:
+
+        source_dataset --> derived_dataset
+
+    Only Mermaid blocks marked as [mermaid, lineage, svg] are modified.
+    Supply-chain pie charts and other Mermaid diagrams are left unchanged.
+    """
+    if not DATASET_PAGES_DIR.exists():
+        print(f"Dataset pages directory not found: {DATASET_PAGES_DIR}", file=sys.stderr)
+        return 1
+
+    updated_count = 0
+
+    lineage_block_pattern = re.compile(
+        r"(\[mermaid,\s*lineage,\s*svg\]\s*\n----\s*\n)(.*?)(\n----)",
+        flags=re.DOTALL,
+    )
+
+    edge_pattern = re.compile(
+        r"^(\s*)([A-Za-z0-9_.-]+)\s+-->\s+([A-Za-z0-9_.-]+)(\s*)$",
+        flags=re.MULTILINE,
+    )
+
+    def reverse_edges_in_block(match: re.Match) -> str:
+        block_start = match.group(1)
+        block_body = match.group(2)
+        block_end = match.group(3)
+
+        def reverse_edge(edge_match: re.Match) -> str:
+            indent = edge_match.group(1)
+            source = edge_match.group(2)
+            target = edge_match.group(3)
+            trailing = edge_match.group(4)
+
+            return f"{indent}{target} --> {source}{trailing}"
+
+        updated_body = edge_pattern.sub(reverse_edge, block_body)
+
+        return block_start + updated_body + block_end
+
+    for page_path in DATASET_PAGES_DIR.glob("*.adoc"):
+        original_text = read_text_fallback(page_path)
+        updated_text = lineage_block_pattern.sub(reverse_edges_in_block, original_text)
+
+        if updated_text != original_text:
+            write_text_utf8(page_path, updated_text)
+            updated_count += 1
+            print(f"Patched lineage arrows in dataset page: {page_path}")
+
+    print(f"Dataset lineage Mermaid arrows patched: {updated_count}")
+    return 0
+
+
 def main() -> int:
     if not CATALOG_PATH.exists():
         print(f"Catalog file not found: {CATALOG_PATH}", file=sys.stderr)
@@ -566,6 +587,7 @@ def main() -> int:
     exit_code = max(exit_code, patch_metric_pages(catalog))
     exit_code = max(exit_code, patch_policy_pages(catalog))
     exit_code = max(exit_code, deduplicate_policy_nav_entries())
+    exit_code = max(exit_code, patch_lineage_mermaid_arrows())
 
     return exit_code
 
