@@ -47,8 +47,6 @@ datasets:
     - ex:ai-system
     - ex:sector-coupling
     - ex:energy
-    wasDerivedFrom:
-    - ex:uc1-training-dataset
   - identifier: ex:uc1-training-data-procedures
     title: Training Data Collection and Processing Procedures for UC1
     publisher:
