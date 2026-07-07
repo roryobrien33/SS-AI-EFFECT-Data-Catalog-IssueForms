@@ -23,90 +23,79 @@ jobs:
       contains(github.event.issue.labels.*.name, 'remove-quality-measurement') ||
       contains(github.event.issue.labels.*.name, 'add-policy') ||
       contains(github.event.issue.labels.*.name, 'remove-policy') ||
-      contains(github.event.issue.labels.*.name, 'add-lineage-link') ||
-      contains(github.event.issue.labels.*.name, 'remove-lineage-link') ||
-*     (
-        contains(github.eve*t.issue.body, '### Dataset identif*er') &&
-        contains(github.ev*nt.issue.body, '### Dataset title'* &&
-        contains(github.event.*ssue.body, '### Dataset descriptio*')
+      (
+        contains(github.event.issue.body, '### Dataset identifier') &&
+        contains(github.event.issue.body, '### Dataset title') &&
+        contains(github.event.issue.body, '### Dataset description')
       ) ||
       (
-        cont*ins(github.event.issue.body, '### *ataset identifier') &&
-        con*ains(github.event.issue.body, '###*Reason for removal') &&
-        co*tains(github.event.issue.body, '##* Confirm dataset removal')
-      )*||
-      (
-        contains(github*event.issue.body, '### Dataset ide*tifier') &&
-        contains(githu*.event.issue.body, '### Confirm da*aset edit')
+        contains(github.event.issue.body, '### Dataset identifier') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm dataset removal')
       ) ||
       (
-   *    contains(github.event.issue.bo*y, '### Preferred label') &&
-     *  contains(github.event.issue.body* '### Concept definition') &&
-    *   contains(github.event.issue.bod*, '### Confirm concept addition')
-*     ) ||
-      (
-        contains*github.event.issue.body, '### Conc*pt identifier') &&
-        contain*(github.event.issue.body, '### Rea*on for removal') &&
-        contai*s(github.event.issue.body, '### Co*firm concept removal')
-      ) ||
-*     (
-        contains(github.eve*t.issue.body, '### Preferred label*) &&
-        contains(github.event*issue.body, '### Metric definition*) &&
-        contains(github.event*issue.body, '### Confirm metric ad*ition')
+        contains(github.event.issue.body, '### Dataset identifier') &&
+        contains(github.event.issue.body, '### Confirm dataset edit')
       ) ||
       (
-       *contains(github.event.issue.body, *### Metric identifier') &&
-       *contains(github.event.issue.body, *### Reason for removal') &&
-      * contains(github.event.issue.body,*'### Confirm metric removal')
-    * ) ||
-      (
-        contains(git*ub.event.issue.body, '### Dataset *dentifier') &&
-        contains(gi*hub.event.issue.body, '### Metric *dentifier') &&
-        contains(gi*hub.event.issue.body, '### Quality*measurement value') &&
-        con*ains(github.event.issue.body, '###*Confirm quality measurement additi*n')
+        contains(github.event.issue.body, '### Preferred label') &&
+        contains(github.event.issue.body, '### Concept definition') &&
+        contains(github.event.issue.body, '### Confirm concept addition')
       ) ||
       (
-        con*ains(github.event.issue.body, '###*Quality measurement identifier') &*
-        contains(github.event.iss*e.body, '### Reason for removal') *&
-        contains(github.event.is*ue.body, '### Confirm quality meas*rement removal')
-      ) ||
-      *
-        contains(github.event.iss*e.body, '### Policy title') &&
-   *    contains(github.event.issue.bo*y, '### Policy description') &&
-  *     contains(github.event.issue.b*dy, '### Confirm policy addition')*      ) ||
-      (
-        contain*(github.event.issue.body, '### Pol*cy UID') &&
-        contains(githu*.event.issue.body, '### Reason for*removal') &&
-        contains(gith*b.event.issue.body, '### Confirm p*licy removal')
+        contains(github.event.issue.body, '### Concept identifier') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm concept removal')
       ) ||
       (
-*       contains(github.event.issue*body, '### Target dataset identifi*r') &&
-        contains(github.eve*t.issue.body, '### Source / input *ataset identifier') &&
-        con*ains(github.event.issue.body, '###*Confirm lineage link addition')
-  *   ) ||
+        contains(github.event.issue.body, '### Preferred label') &&
+        contains(github.event.issue.body, '### Metric definition') &&
+        contains(github.event.issue.body, '### Confirm metric addition')
+      ) ||
       (
-        contains(g*thub.event.issue.body, '### Target*dataset identifier') &&
-        co*tains(github.event.issue.body, '##* Source / input dataset identifier*) &&
-        contains(github.event*issue.body, '### Confirm lineage l*nk removal')
+        contains(github.event.issue.body, '### Metric identifier') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm metric removal')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Dataset identifier') &&
+        contains(github.event.issue.body, '### Metric identifier') &&
+        contains(github.event.issue.body, '### Quality measurement value') &&
+        contains(github.event.issue.body, '### Confirm quality measurement addition')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Quality measurement identifier') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm quality measurement removal')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Policy title') &&
+        contains(github.event.issue.body, '### Policy description') &&
+        contains(github.event.issue.body, '### Confirm policy addition')
+      ) ||
+      (
+        contains(github.event.issue.body, '### Policy UID') &&
+        contains(github.event.issue.body, '### Reason for removal') &&
+        contains(github.event.issue.body, '### Confirm policy removal')
       )
 
-    runs-on:*ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - *ame: Checkout
-        uses: action*/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-       *  ref: main
+          ref: main
 
-      - name: Setup P*thon
-        uses: actions/setup-p*thon@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          py*hon-version: "3.11"
+          python-version: "3.11"
 
-      - name:*Install Python dependencies
-      * run: |
-          python -m pip in*tall --upgrade pip
-          pip i*stall pyyaml
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
 
       - name: Write issue body to file
         env:
@@ -135,8 +124,6 @@ jobs:
           IS_REMOVE_QUALITY_MEASUREMENT: ${{ contains(github.event.issue.labels.*.name, 'remove-quality-measurement') }}
           IS_ADD_POLICY: ${{ contains(github.event.issue.labels.*.name, 'add-policy') }}
           IS_REMOVE_POLICY: ${{ contains(github.event.issue.labels.*.name, 'remove-policy') }}
-          IS_ADD_LINEAGE_LINK: ${{ contains(github.event.issue.labels.*.name, 'add-lineage-link') }}
-          IS_REMOVE_LINEAGE_LINK: ${{ contains(github.event.issue.labels.*.name, 'remove-lineage-link') }}
         run: |
           python - <<'PY'
           import copy
@@ -218,84 +205,84 @@ jobs:
               ]
 
 
-          def*slugify(value):
-              valu* = str(value or "").lower().strip(*
+          def slugify(value):
+              value = str(value or "").lower().strip()
               value = re.sub(r"[^a-z0-9]+", "-", value)
-            * value = re.sub(r"-+", "-", value)*strip("-")
-              return va*ue or "item"
+              value = re.sub(r"-+", "-", value).strip("-")
+              return value or "item"
 
 
-          def slug_*dentifier(value):
-              va*ue = str(value or "").strip()
+          def slug_identifier(value):
+              value = str(value or "").strip()
 
-   *          if ":" in value:
-       *          value = value.split(":",*1)[1]
+              if ":" in value:
+                  value = value.split(":", 1)[1]
 
-              value = value*lower()
-              value = re.s*b(r"[^a-z0-9]+", "-", value)
-     *        value = re.sub(r"-+", "-",*value).strip("-")
+              value = value.lower()
+              value = re.sub(r"[^a-z0-9]+", "-", value)
+              value = re.sub(r"-+", "-", value).strip("-")
 
-              r*turn value or "item"
-
-
-          d*f is_yes(value):
-              ret*rn str(value or "").strip().lower(* == "yes"
+              return value or "item"
 
 
-          def looks_li*e_url(value):
-              if not*value:
-                  return Tr*e
-              return value.start*with("http://") or value.startswit*("https://")
+          def is_yes(value):
+              return str(value or "").strip().lower() == "yes"
 
 
-          def looks*like_date(value):
-              if*not value:
-                  retur* True
-              return bool(re*match(r"^\d{4}-\d{2}-\d{2}$", valu*))
+          def looks_like_url(value):
+              if not value:
+                  return True
+              return value.startswith("http://") or value.startswith("https://")
 
 
-          def ensure_list_sec*ion(catalog, key):
-              s*ction = catalog.get(key, [])
+          def looks_like_date(value):
+              if not value:
+                  return True
+              return bool(re.match(r"^\d{4}-\d{2}-\d{2}$", value))
 
-    *         if section is None:
-     *            section = []
 
-        *     if not isinstance(section, li*t):
-                  fail(f"Expec*ed top-level '{key}' to be a list.*)
+          def ensure_list_section(catalog, key):
+              section = catalog.get(key, [])
+
+              if section is None:
+                  section = []
+
+              if not isinstance(section, list):
+                  fail(f"Expected top-level '{key}' to be a list.")
 
               return section
 
 
-*         def identifiers_in(sectio*, id_key="identifier"):
-          *   return {
-                  str(*tem.get(id_key)).strip()
-         *        for item in section
-      *           if isinstance(item, dic*) and item.get(id_key)
-           *  }
+          def identifiers_in(section, id_key="identifier"):
+              return {
+                  str(item.get(id_key)).strip()
+                  for item in section
+                  if isinstance(item, dict) and item.get(id_key)
+              }
 
 
-          def as_list(value)*
+          def as_list(value):
               if value is None:
- *                return []
+                  return []
 
-       *      if isinstance(value, list):
-*                 return [str(v).st*ip() for v in value if str(v).stri*()]
+              if isinstance(value, list):
+                  return [str(v).strip() for v in value if str(v).strip()]
 
-              value = str(val*e).strip()
+              value = str(value).strip()
               return [value] if value else []
 
 
-          *ef require_existing(reference, exi*ting_ids, field_name, errors):
-   *          if reference and referen*e not in existing_ids:
-           *      errors.append(f"{field_name}*references missing identifier: {re*erence}")
+          def require_existing(reference, existing_ids, field_name, errors):
+              if reference and reference not in existing_ids:
+                  errors.append(f"{field_name} references missing identifier: {reference}")
 
 
-          def require_*ll_existing(references, existing_i*s, field_name, errors):
-          *   missing = [ref for ref in references if ref not in existing_ids]
+          def require_all_existing(references, existing_ids, field_name, errors):
+              missing = [ref for ref in references if ref not in existing_ids]
 
-*             if missing:
-         *        errors.append(
-           *          f"{field_name} references missing identifiers: {', '.join(missing)}"
+              if missing:
+                  errors.append(
+                      f"{field_name} references missing identifiers: {', '.join(missing)}"
                   )
 
 
@@ -396,30 +383,32 @@ jobs:
 
               for line in body_lines:
                   match = re.match(r"^(\s*)-\s+", line)
-                  if*match:
-                      top_i*em_indent = match.group(1)
-       *              break
+                  if match:
+                      top_item_indent = match.group(1)
+                      break
 
-             *if top_item_indent is None:
-      *           top_item_indent = "  "
-*              item_start_pattern =*re.compile(rf"^{re.escape(top_item*indent)}-\s+")
+              if top_item_indent is None:
+                  top_item_indent = "  "
 
-              prea*ble = []
+              item_start_pattern = re.compile(rf"^{re.escape(top_item_indent)}-\s+")
+
+              preamble = []
               items = []
-*             current_item = []
+              current_item = []
 
-  *           for line in body_lines:*                  if item_start_pa*tern.match(line):
-                *     if current_item:
-            *             items.append(current_*tem)
-                      current*item = [line]
-                  el*e:
-                      if curren*_item:
-                          c*rrent_item.append(line)
-          *           else:
-                 *        preamble.append(line)
+              for line in body_lines:
+                  if item_start_pattern.match(line):
+                      if current_item:
+                          items.append(current_item)
+                      current_item = [line]
+                  else:
+                      if current_item:
+                          current_item.append(line)
+                      else:
+                          preamble.append(line)
 
-   *          if current_item:
-       *          items.append(current_ite*)
+              if current_item:
+                  items.append(current_item)
 
               return {
                   "section_abs_start": section_abs_start,
@@ -440,170 +429,167 @@ jobs:
                   rf"(?m)^\s*{re.escape(id_key)}:\s*{re.escape(identifier)}\s*$"
               )
 
-              *eturn bool(id_pattern.search(item_*ext) or nested_id_pattern.search(i*em_text))
+              return bool(id_pattern.search(item_text) or nested_id_pattern.search(item_text))
 
 
-          def remove_l*st_items_by_identifier(text, secti*n_name, id_key, identifiers):
-    *         identifiers = {str(x).str*p() for x in identifiers if str(x)*strip()}
+          def remove_list_items_by_identifier(text, section_name, id_key, identifiers):
+              identifiers = {str(x).strip() for x in identifiers if str(x).strip()}
 
-              if not ide*tifiers:
-                  return *ext
+              if not identifiers:
+                  return text
 
-              split = split_s*ction_items(text, section_name)
+              split = split_section_items(text, section_name)
 
- *            if not split:
-        *         return text
+              if not split:
+                  return text
 
-            * before_section = text[:split["section_abs_start"]]
-              aft*r_section = text[split["section_abs_end"]:]
-              header = sp*it["header"]
-              preambl* = split["preamble"]
-             *items = split["items"]
-           *  top_item_indent = split["top_item_indent"]
+              before_section = text[:split["section_abs_start"]]
+              after_section = text[split["section_abs_end"]:]
+              header = split["header"]
+              preamble = split["preamble"]
+              items = split["items"]
+              top_item_indent = split["top_item_indent"]
 
-              kept_item* = []
+              kept_items = []
 
-              for item_line* in items:
-                  item_*ext = "".join(item_lines)
-        *         should_remove = False
+              for item_lines in items:
+                  item_text = "".join(item_lines)
+                  should_remove = False
 
-  *               for identifier in i*entifiers:
-                      i* item_has_identifier(item_text, id*key, identifier, top_item_indent):*                          should_r*move = True
-                      *   break
+                  for identifier in identifiers:
+                      if item_has_identifier(item_text, id_key, identifier, top_item_indent):
+                          should_remove = True
+                          break
 
-                  if not*should_remove:
-                   *  kept_items.append(item_lines)
+                  if not should_remove:
+                      kept_items.append(item_lines)
 
- *            new_section_text = hea*er + "".join(preamble) + "".join(
-*                 "".join(item) for*item in kept_items
-              )*
-              if not new_section_*ext.endswith("\n"):
-              *   new_section_text += "\n"
-
-     *        return before_section + ne*_section_text + after_section
-
-
-  *       def replace_list_item_by_id*ntifier(text, section_name, id_key* identifier, replacement_item):
-  *           split = split_section_i*ems(text, section_name)
-
-         *    if not split:
-                * fail(f"Could not find top-level s*ction: {section_name}")
-
-         *    before_section = text[:split["section_abs_start"]]
-              *fter_section = text[split["section_abs_end"]:]
-              header =*split["header"]
-              prea*ble = split["preamble"]
-          *   items = split["items"]
-        *     top_item_indent = split["top_item_indent"]
-
-              replac*ment_block = indent_block(dump_lis*_item_block(replacement_item), top*item_indent)
-
-              replac*d = False
-              new_items * []
-
-              for item_lines *n items:
-                  item_te*t = "".join(item_lines)
-
-         *        if item_has_identifier(ite*_text, id_key, identifier, top_ite*_indent):
-                      ne*_items.append([replacement_block])*                      replaced = T*ue
-                  else:
-       *              new_items.append(ite*_lines)
-
-              if not repl*ced:
-                  fail(f"Coul* not find {section_name} item with*{id_key}: {identifier}")
-
-        *     new_section_text = header + "*.join(preamble) + "".join(
-       *          "".join(item) for item i* new_items
+              new_section_text = header + "".join(preamble) + "".join(
+                  "".join(item) for item in kept_items
               )
 
-      *       if not new_section_text.end*with("\n"):
-                  new_*ection_text += "\n"
+              if not new_section_text.endswith("\n"):
+                  new_section_text += "\n"
 
-             *return before_section + new_sectio*_text + after_section
+              return before_section + new_section_text + after_section
 
 
-          *f not CATALOG_PATH.exists():
-     *        fail(f"Could not find {CAT*LOG_PATH}")
+          def replace_list_item_by_identifier(text, section_name, id_key, identifier, replacement_item):
+              split = split_section_items(text, section_name)
 
-          issue_body * ISSUE_PATH.read_text(encoding="ut*-8")
-          catalog_text = CATA*OG_PATH.read_text(encoding="utf-8"*
+              if not split:
+                  fail(f"Could not find top-level section: {section_name}")
+
+              before_section = text[:split["section_abs_start"]]
+              after_section = text[split["section_abs_end"]:]
+              header = split["header"]
+              preamble = split["preamble"]
+              items = split["items"]
+              top_item_indent = split["top_item_indent"]
+
+              replacement_block = indent_block(dump_list_item_block(replacement_item), top_item_indent)
+
+              replaced = False
+              new_items = []
+
+              for item_lines in items:
+                  item_text = "".join(item_lines)
+
+                  if item_has_identifier(item_text, id_key, identifier, top_item_indent):
+                      new_items.append([replacement_block])
+                      replaced = True
+                  else:
+                      new_items.append(item_lines)
+
+              if not replaced:
+                  fail(f"Could not find {section_name} item with {id_key}: {identifier}")
+
+              new_section_text = header + "".join(preamble) + "".join(
+                  "".join(item) for item in new_items
+              )
+
+              if not new_section_text.endswith("\n"):
+                  new_section_text += "\n"
+
+              return before_section + new_section_text + after_section
+
+
+          if not CATALOG_PATH.exists():
+              fail(f"Could not find {CATALOG_PATH}")
+
+          issue_body = ISSUE_PATH.read_text(encoding="utf-8")
+          catalog_text = CATALOG_PATH.read_text(encoding="utf-8")
 
           try:
-              cat*log = yaml.safe_load(catalog_text)*or {}
-          except Exception a* exc:
-              fail(f"Unable *o parse {CATALOG_PATH}: {exc}")
+              catalog = yaml.safe_load(catalog_text) or {}
+          except Exception as exc:
+              fail(f"Unable to parse {CATALOG_PATH}: {exc}")
 
- *        datasets = ensure_list_sec*ion(catalog, "datasets")
-         *concepts = ensure_list_section(cat*log, "concepts")
-          series * ensure_list_section(catalog, "ser*es")
-          distributions = ens*re_list_section(catalog, "distribu*ions")
-          metrics = ensure_*ist_section(catalog, "metrics")
-  *       quality_measurements = ensu*e_list_section(catalog, "qualityMe*surements")
-          policies = e*sure_list_section(catalog, "polici*s")
+          datasets = ensure_list_section(catalog, "datasets")
+          concepts = ensure_list_section(catalog, "concepts")
+          series = ensure_list_section(catalog, "series")
+          distributions = ensure_list_section(catalog, "distributions")
+          metrics = ensure_list_section(catalog, "metrics")
+          quality_measurements = ensure_list_section(catalog, "qualityMeasurements")
+          policies = ensure_list_section(catalog, "policies")
 
-          dataset_ids = ident*fiers_in(datasets, "identifier")
- *        concept_ids = identifiers_*n(concepts, "identifier")
-        * series_ids = identifiers_in(serie*, "identifier")
-          distribu*ion_ids = identifiers_in(distribut*ons, "identifier")
-          metri*_ids = identifiers_in(metrics, "id*ntifier")
-          quality_measur*ment_ids = identifiers_in(quality_*easurements, "identifier")
-       *  policy_uids = identifiers_in(pol*cies, "uid")
+          dataset_ids = identifiers_in(datasets, "identifier")
+          concept_ids = identifiers_in(concepts, "identifier")
+          series_ids = identifiers_in(series, "identifier")
+          distribution_ids = identifiers_in(distributions, "identifier")
+          metric_ids = identifiers_in(metrics, "identifier")
+          quality_measurement_ids = identifiers_in(quality_measurements, "identifier")
+          policy_uids = identifiers_in(policies, "uid")
 
-          is_add_dat*set = str(os.environ.get("IS_ADD_D*TASET", "")).lower() == "true"
-   *      is_remove_dataset = str(os.e*viron.get("IS_REMOVE_DATASET", "")*.lower() == "true"
-          is_ed*t_dataset = str(os.environ.get("IS*EDIT_DATASET", "")).lower() == "tr*e"
-          is_add_concept = str(*s.environ.get("IS_ADD_CONCEPT", ""*).lower() == "true"
-          is_r*move_concept = str(os.environ.get(*IS_REMOVE_CONCEPT", "")).lower() =* "true"
-          is_add_metric = *tr(os.environ.get("IS_ADD_METRIC",*"")).lower() == "true"
-          i*_remove_metric = str(os.environ.ge*("IS_REMOVE_METRIC", "")).lower() *= "true"
-          is_add_quality_*easurement = str(os.environ.get("I*_ADD_QUALITY_MEASUREMENT", "")).lo*er() == "true"
-          is_remove*quality_measurement = str(os.envir*n.get("IS_REMOVE_QUALITY_MEASUREME*T", "")).lower() == "true"
-       *  is_add_policy = str(os.environ.g*t("IS_ADD_POLICY", "")).lower() ==*"true"
-          is_remove_policy * str(os.environ.get("IS_REMOVE_POL*CY", "")).lower() == "true"
-      *   is_add_lineage_link = str(os.en*iron.get("IS_ADD_LINEAGE_LINK", ""*).lower() == "true"
-          is_r*move_lineage_link = str(os.environ*get("IS_REMOVE_LINEAGE_LINK", ""))*lower() == "true"
+          is_add_dataset = str(os.environ.get("IS_ADD_DATASET", "")).lower() == "true"
+          is_remove_dataset = str(os.environ.get("IS_REMOVE_DATASET", "")).lower() == "true"
+          is_edit_dataset = str(os.environ.get("IS_EDIT_DATASET", "")).lower() == "true"
+          is_add_concept = str(os.environ.get("IS_ADD_CONCEPT", "")).lower() == "true"
+          is_remove_concept = str(os.environ.get("IS_REMOVE_CONCEPT", "")).lower() == "true"
+          is_add_metric = str(os.environ.get("IS_ADD_METRIC", "")).lower() == "true"
+          is_remove_metric = str(os.environ.get("IS_REMOVE_METRIC", "")).lower() == "true"
+          is_add_quality_measurement = str(os.environ.get("IS_ADD_QUALITY_MEASUREMENT", "")).lower() == "true"
+          is_remove_quality_measurement = str(os.environ.get("IS_REMOVE_QUALITY_MEASUREMENT", "")).lower() == "true"
+          is_add_policy = str(os.environ.get("IS_ADD_POLICY", "")).lower() == "true"
+          is_remove_policy = str(os.environ.get("IS_REMOVE_POLICY", "")).lower() == "true"
 
           if (
-*             not is_add_dataset
-  *           and not is_remove_datas*t
-              and not is_edit_da*aset
-              and not is_add_*oncept
-              and not is_re*ove_concept
-              and not *s_add_metric
-              and not*is_remove_metric
-              and*not is_add_quality_measurement
-   *          and not is_remove_qualit*_measurement
-              and not*is_add_policy
-              and no* is_remove_policy
-              an* not is_add_lineage_link
-         *    and not is_remove_lineage_link*          ):
-              if "###*Dataset title" in issue_body and "*## Dataset description" in issue_b*dy:
-                  is_add_datas*t = True
-              elif "### C*nfirm dataset removal" in issue_bo*y and "### Reason for removal" in *ssue_body:
-                  is_re*ove_dataset = True
-              e*if "### Confirm dataset edit" in i*sue_body and "### Dataset identifi*r" in issue_body:
-                * is_edit_dataset = True
-          *   elif "### Confirm concept addit*on" in issue_body and "### Preferr*d label" in issue_body:
-          *       is_add_concept = True
-     *        elif "### Confirm concept *emoval" in issue_body and "### Con*ept identifier" in issue_body:
-   *              is_remove_concept = *rue
-              elif "### Confir* metric addition" in issue_body an* "### Metric definition" in issue_*ody:
-                  is_add_metr*c = True
-              elif "### C*nfirm metric removal" in issue_bod* and "### Metric identifier" in is*ue_body:
-                  is_remo*e_metric = True
-              elif*"### Confirm quality measurement a*dition" in issue_body and "### Qua*ity measurement value" in issue_bo*y:
-                  is_add_qualit*_measurement = True
-              *lif "### Confirm quality measureme*t removal" in issue_body and "### *uality measurement identifier" in *ssue_body:
-                  is_re*ove_quality_measurement = True
-   *          elif "### Confirm policy*addition" in issue_body and "### P*licy title" in issue_body:
-       *          is_add_policy = True
-   *          elif "### Confirm policy*removal" in issue_body and "### Po*icy UID" in issue_body:
-          *       is_remove_policy = True
-   *          elif "### Confirm lineag* link addition" in issue_body and *### Target dataset identifier" in *ssue_body:
-                  is_ad*_lineage_link = True
-             *elif "### Confirm lineage link rem*val" in issue_body and "### Target*dataset identifier" in issue_body:*                  is_remove_lineag*_link = True
+              not is_add_dataset
+              and not is_remove_dataset
+              and not is_edit_dataset
+              and not is_add_concept
+              and not is_remove_concept
+              and not is_add_metric
+              and not is_remove_metric
+              and not is_add_quality_measurement
+              and not is_remove_quality_measurement
+              and not is_add_policy
+              and not is_remove_policy
+          ):
+              if "### Dataset title" in issue_body and "### Dataset description" in issue_body:
+                  is_add_dataset = True
+              elif "### Confirm dataset removal" in issue_body and "### Reason for removal" in issue_body:
+                  is_remove_dataset = True
+              elif "### Confirm dataset edit" in issue_body and "### Dataset identifier" in issue_body:
+                  is_edit_dataset = True
+              elif "### Confirm concept addition" in issue_body and "### Preferred label" in issue_body:
+                  is_add_concept = True
+              elif "### Confirm concept removal" in issue_body and "### Concept identifier" in issue_body:
+                  is_remove_concept = True
+              elif "### Confirm metric addition" in issue_body and "### Metric definition" in issue_body:
+                  is_add_metric = True
+              elif "### Confirm metric removal" in issue_body and "### Metric identifier" in issue_body:
+                  is_remove_metric = True
+              elif "### Confirm quality measurement addition" in issue_body and "### Quality measurement value" in issue_body:
+                  is_add_quality_measurement = True
+              elif "### Confirm quality measurement removal" in issue_body and "### Quality measurement identifier" in issue_body:
+                  is_remove_quality_measurement = True
+              elif "### Confirm policy addition" in issue_body and "### Policy title" in issue_body:
+                  is_add_policy = True
+              elif "### Confirm policy removal" in issue_body and "### Policy UID" in issue_body:
+                  is_remove_policy = True
 
-          active_mod*s = [
+          active_modes = [
               is_add_dataset,
               is_remove_dataset,
               is_edit_dataset,
@@ -615,315 +601,323 @@ jobs:
               is_remove_quality_measurement,
               is_add_policy,
               is_remove_policy,
-              is_add_lineage_link,
-              is_remove_lineage_link,
           ]
 
-          if sum(1 for mode in *ctive_modes if mode) > 1:
-        *     fail("Issue appears to match *ore than one supported intake form* Check labels.")
+          if sum(1 for mode in active_modes if mode) > 1:
+              fail("Issue appears to match more than one supported intake form. Check labels.")
 
-          if not*any(active_modes):
-              f*il("Issue does not match a support*d catalog intake form.")
+          if not any(active_modes):
+              fail("Issue does not match a supported catalog intake form.")
 
-        * if is_add_dataset:
-              *ataset_identifier = extract_field(*ssue_body, "Dataset identifier")
- *            dataset_title = extrac*_field(issue_body, "Dataset title"*
-              dataset_description*= extract_field(issue_body, "Datas*t description")
-              publ*sher_name = extract_field(issue_bo*y, "Publisher name")
-             *dataset_status = extract_field(iss*e_body, "Dataset status")
-        *     license_value = extract_field*issue_body, "License title or URL"*
-              dataset_series_iden*ifier = extract_field(issue_body, *Dataset series identifier")
-      *       policy_uid = extract_field(*ssue_body, "Policy UID")
-         *    theme_identifiers = extract_li*es(issue_body, "Theme / concept id*ntifiers")
-              lineage_i*entifiers = extract_lines(issue_bo*y, "Source / input dataset identif*ers")
+          if is_add_dataset:
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              dataset_title = extract_field(issue_body, "Dataset title")
+              dataset_description = extract_field(issue_body, "Dataset description")
+              publisher_name = extract_field(issue_body, "Publisher name")
+              dataset_status = extract_field(issue_body, "Dataset status")
+              license_value = extract_field(issue_body, "License title or URL")
+              dataset_series_identifier = extract_field(issue_body, "Dataset series identifier")
+              policy_uid = extract_field(issue_body, "Policy UID")
+              theme_identifiers = extract_lines(issue_body, "Theme / concept identifiers")
+              lineage_identifiers = extract_lines(issue_body, "Source / input dataset identifiers")
 
-              add_distribut*on = extract_field(issue_body, "Ad* a distribution?")
-              d*stribution_identifier = extract_fi*ld(issue_body, "Distribution ident*fier")
-              distribution_*ormat = extract_field(issue_body, *Distribution format")
-            * distribution_access_url = extract*field(issue_body, "Distribution ac*ess URL")
-              distributi*n_issued = extract_field(issue_bod*, "Distribution issued date")
+              add_distribution = extract_field(issue_body, "Add a distribution?")
+              distribution_identifier = extract_field(issue_body, "Distribution identifier")
+              distribution_format = extract_field(issue_body, "Distribution format")
+              distribution_access_url = extract_field(issue_body, "Distribution access URL")
+              distribution_issued = extract_field(issue_body, "Distribution issued date")
 
-   *          add_quality = extract_fi*ld(issue_body, "Add data quality m*asurement?")
-              quality*measurement_identifier = extract_f*eld(issue_body, "Quality measureme*t identifier")
-              metri*_identifier = extract_field(issue_*ody, "Metric identifier")
-        *     quality_measurement_value = e*tract_field(issue_body, "Quality m*asurement value")
-              qu*lity_measurement_date = extract_fi*ld(issue_body, "Quality measuremen* generated date")
-
-              e*rors = []
-
-              if not da*aset_title:
-                  erro*s.append("Missing required field: *ataset title.")
-
-              if *ot dataset_description:
-          *       errors.append("Missing requ*red field: Dataset description.")
-*              if not publisher_nam*:
-                  errors.append(*Missing required field: Publisher *ame.")
-
-              if not licen*e_value:
-                  errors.*ppend("Missing required field: Lic*nse title or URL.")
-
-             *if dataset_title and not dataset_i*entifier:
-                  datase*_identifier = f"ex:{slugify(datase*_title)}"
-
-              if datase*_identifier in dataset_ids:
-      *           errors.append(
-        *             f"Dataset identifier *lready exists: {dataset_identifier*. Use the Edit Dataset form instea*."
-                  )
-
-          *   require_all_existing(theme_iden*ifiers, concept_ids, "Theme / conc*pt identifiers", errors)
-         *    require_existing(dataset_serie*_identifier, series_ids, "Dataset *eries identifier", errors)
-       *      require_existing(policy_uid,*policy_uids, "Policy UID", errors)*              require_all_existing*lineage_identifiers, dataset_ids, *Source / input dataset identifiers*, errors)
-
-              if is_yes*add_distribution):
-               *  if not distribution_identifier:
-*                     distribution_*dentifier = f"{dataset_identifier}*distribution"
-
-                  i* distribution_identifier in distri*ution_ids:
-                      e*rors.append(f"Distribution identif*er already exists: {distribution_i*entifier}")
-
-                  if *ot distribution_format:
-          *           errors.append("Distribu*ion format is required when 'Add a*distribution?' is Yes.")
-
-        *         if not distribution_acces*_url:
-                      errors*append("Distribution access URL is*required when 'Add a distribution?* is Yes.")
-
-                  if d*stribution_access_url and not look*_like_url(distribution_access_url)*
-                      errors.appe*d("Distribution access URL must st*rt with http:// or https://.")
-
-  *               if distribution_iss*ed and not looks_like_date(distrib*tion_issued):
-                    * errors.append("Distribution issue* date must use YYYY-MM-DD format."*
-
-              if is_yes(add_qual*ty):
-                  if not metr*c_identifier:
-                    * errors.append("Metric identifier *s required when 'Add data quality *easurement?' is Yes.")
-
-          *       require_existing(metric_ide*tifier, metric_ids, "Metric identi*ier", errors)
-
-                  i* not quality_measurement_value:
-  *                   errors.append("*uality measurement value is requir*d when 'Add data quality measureme*t?' is Yes.")
-
-                  i* quality_measurement_value:
-      *               try:
-              *           quality_measurement_val*e_float = float(quality_measuremen*_value)
-                      exce*t ValueError:
-                    *     errors.append("Quality measur*ment value must be numeric.")
-    *                     quality_measu*ement_value_float = None
-         *        else:
-                    * quality_measurement_value_float =*None
-
-                  if quality*measurement_date and not looks_lik*_date(quality_measurement_date):
- *                    errors.append(*Quality measurement generated date*must use YYYY-MM-DD format.")
-
-   *              if not quality_measu*ement_identifier and dataset_ident*fier:
-                      qualit*_measurement_identifier = f"{datas*t_identifier}-quality-measurement"*
-                  if quality_meas*rement_identifier in quality_measu*ement_ids:
-                      e*rors.append(
-                     *    f"Quality measurement identifi*r already exists: {quality_measure*ent_identifier}"
-                 *    )
-              else:
-        *         quality_measurement_value*float = None
-
-              if err*rs:
-                  fail(errors)*
-              dataset = {
-       *          "identifier": dataset_id*ntifier,
-                  "title"* dataset_title,
-                  *description": dataset_description,*                  "publisher": {
- *                    "name": publis*er_name
-                  },
-     *            "license": {
-         *            "title": license_value*                  },
-             *}
-
-              if dataset_status*
-                  dataset["status"] = dataset_status
-
-              *f dataset_series_identifier:
-     *            dataset["inSeries"] = *ataset_series_identifier
-
-        *     if policy_uid:
-              *   dataset["hasPolicy"] = policy_u*d
-
-              if theme_identifi*rs:
-                  dataset["theme"] = theme_identifiers
-
-         *    if lineage_identifiers:
-      *           dataset["wasDerivedFrom"] = lineage_identifiers
-
-         *    distribution = None
-
-         *    if is_yes(add_distribution):
- *                dataset["distribution"] = [distribution_identifier]
-
-*                 distribution = {
-*                     "identifier":*distribution_identifier,
-         *            "format": distribution*format,
-                      "acc*ssURL": distribution_access_url,
- *                }
-
-               *  if distribution_issued:
-        *             distribution["issued"] = distribution_issued
-
-          *   quality_measurement = None
-
-   *          if is_yes(add_quality):
-*                 quality_measureme*t = {
-                      "ident*fier": quality_measurement_identif*er,
-                      "compute*On": dataset_identifier,
-         *            "isMeasurementOf": met*ic_identifier,
-                   *  "value": quality_measurement_val*e_float,
-                  }
-
-    *             if quality_measuremen*_date:
-                      quali*y_measurement["generatedAtTime"] =*quality_measurement_date
-
-        *     dataset_block = dump_list_ite*_block(dataset)
-              cata*og_text = insert_block_into_top_le*el_section(catalog_text, "datasets*, dataset_block)
-
-              if*distribution:
-                  di*tribution_block = dump_list_item_b*ock(distribution)
-                * catalog_text = insert_block_into_*op_level_section(
-                *     catalog_text,
-               *      "distributions",
-           *          distribution_block
-     *            )
-
-              if qu*lity_measurement:
-                * quality_measurement_block = dump_*ist_item_block(quality_measurement*
-                  catalog_text = *nsert_block_into_top_level_section*
-                      catalog_tex*,
-                      "qualityMe*surements",
-                      *uality_measurement_block
-         *        )
-
-              print(f"A*ded dataset: {dataset_identifier}"*
-
-              if distribution:
- *                print(f"Added dist*ibution: {distribution_identifier}*)
-
-              if quality_measur*ment:
-                  print(f"Ad*ed quality measurement: {quality_m*asurement_identifier}")
-
-         *if is_remove_dataset:
-            * dataset_identifier = extract_fiel*(issue_body, "Dataset identifier")*              print(f"Remove reque*ted for dataset identifier: {repr(*ataset_identifier)}")
-
-           *  reason = extract_field(issue_bod*, "Reason for removal")
-          *   remove_distributions_answer = e*tract_field(issue_body, "Remove li*ked distributions?")
-             *remove_quality_measurements_answer*= extract_field(issue_body, "Remov* linked quality measurements?")
-  *           confirmation = extract_*ield(issue_body, "Confirm dataset *emoval")
+              add_quality = extract_field(issue_body, "Add data quality measurement?")
+              quality_measurement_identifier = extract_field(issue_body, "Quality measurement identifier")
+              metric_identifier = extract_field(issue_body, "Metric identifier")
+              quality_measurement_value = extract_field(issue_body, "Quality measurement value")
+              quality_measurement_date = extract_field(issue_body, "Quality measurement generated date")
 
               errors = []
 
-              if not dataset_ide*tifier:
-                  errors.a*pend("Missing required field: Data*et identifier.")
+              if not dataset_title:
+                  errors.append("Missing required field: Dataset title.")
 
-              if*not reason:
-                  erro*s.append("Missing required field: *eason for removal.")
+              if not dataset_description:
+                  errors.append("Missing required field: Dataset description.")
 
-            * if "I confirm that this dataset s*ould be removed from the catalog."*not in confirmation:
-             *    errors.append("You must confir* dataset removal by ticking the co*firmation checkbox.")
+              if not publisher_name:
+                  errors.append("Missing required field: Publisher name.")
 
-           *  target_dataset = None
+              if not license_value:
+                  errors.append("Missing required field: License title or URL.")
 
-         *    for dataset in datasets:
-     *            if isinstance(dataset,*dict) and str(dataset.get("identif*er", "")).strip() == dataset_ident*fier:
-                      target*dataset = dataset
-                *     break
+              if dataset_title and not dataset_identifier:
+                  dataset_identifier = f"ex:{slugify(dataset_title)}"
 
-              if targe*_dataset is None:
-                * errors.append(f"Dataset identifie* not found: {dataset_identifier}")*
-              linked_distribution*ids = []
-              linked_qual*ty_measurement_ids = []
-
-         *    if target_dataset is not None:*                  linked_distribut*on_ids = as_list(target_dataset.ge*("distribution"))
-
-               *  linked_quality_measurement_ids =*[
-                      str(qm.get("identifier")).strip()
-           *          for qm in quality_measur*ments
-                      if isi*stance(qm, dict)
-                 *    and str(qm.get("computedOn", "*)).strip() == dataset_identifier
- *                    and str(qm.get*"identifier", "")).strip()
-       *          ]
-
-              if link*d_distribution_ids and not is_yes(*emove_distributions_answer):
-     *            errors.append(
-       *              "Dataset has linked *istributions. Select Yes for 'Remo*e linked distributions?' "
-       *              f"or remove them sep*rately first. Linked distributions* {', '.join(linked_distribution_id*)}"
+              if dataset_identifier in dataset_ids:
+                  errors.append(
+                      f"Dataset identifier already exists: {dataset_identifier}. Use the Edit Dataset form instead."
                   )
 
-         *    if linked_quality_measurement_*ds and not is_yes(remove_quality_m*asurements_answer):
-              *   errors.append(
-                *     "Dataset has linked quality m*asurements. Select Yes for 'Remove*linked quality measurements?' "
-  *                   f"or remove the* separately first. Linked quality *easurements: {', '.join(linked_qua*ity_measurement_ids)}"
-           *      )
+              require_all_existing(theme_identifiers, concept_ids, "Theme / concept identifiers", errors)
+              require_existing(dataset_series_identifier, series_ids, "Dataset series identifier", errors)
+              require_existing(policy_uid, policy_uids, "Policy UID", errors)
+              require_all_existing(lineage_identifiers, dataset_ids, "Source / input dataset identifiers", errors)
+
+              if is_yes(add_distribution):
+                  if not distribution_identifier:
+                      distribution_identifier = f"{dataset_identifier}-distribution"
+
+                  if distribution_identifier in distribution_ids:
+                      errors.append(f"Distribution identifier already exists: {distribution_identifier}")
+
+                  if not distribution_format:
+                      errors.append("Distribution format is required when 'Add a distribution?' is Yes.")
+
+                  if not distribution_access_url:
+                      errors.append("Distribution access URL is required when 'Add a distribution?' is Yes.")
+
+                  if distribution_access_url and not looks_like_url(distribution_access_url):
+                      errors.append("Distribution access URL must start with http:// or https://.")
+
+                  if distribution_issued and not looks_like_date(distribution_issued):
+                      errors.append("Distribution issued date must use YYYY-MM-DD format.")
+
+              if is_yes(add_quality):
+                  if not metric_identifier:
+                      errors.append("Metric identifier is required when 'Add data quality measurement?' is Yes.")
+
+                  require_existing(metric_identifier, metric_ids, "Metric identifier", errors)
+
+                  if not quality_measurement_value:
+                      errors.append("Quality measurement value is required when 'Add data quality measurement?' is Yes.")
+
+                  if quality_measurement_value:
+                      try:
+                          quality_measurement_value_float = float(quality_measurement_value)
+                      except ValueError:
+                          errors.append("Quality measurement value must be numeric.")
+                          quality_measurement_value_float = None
+                  else:
+                      quality_measurement_value_float = None
+
+                  if quality_measurement_date and not looks_like_date(quality_measurement_date):
+                      errors.append("Quality measurement generated date must use YYYY-MM-DD format.")
+
+                  if not quality_measurement_identifier and dataset_identifier:
+                      quality_measurement_identifier = f"{dataset_identifier}-quality-measurement"
+
+                  if quality_measurement_identifier in quality_measurement_ids:
+                      errors.append(
+                          f"Quality measurement identifier already exists: {quality_measurement_identifier}"
+                      )
+              else:
+                  quality_measurement_value_float = None
 
               if errors:
-*                 fail(errors)
+                  fail(errors)
 
-   *          catalog_text = remove_li*t_items_by_identifier(
-           *      catalog_text,
-              *   "datasets",
-                  "*dentifier",
+              dataset = {
+                  "identifier": dataset_identifier,
+                  "title": dataset_title,
+                  "description": dataset_description,
+                  "publisher": {
+                      "name": publisher_name
+                  },
+                  "license": {
+                      "title": license_value
+                  },
+              }
+
+              if dataset_status:
+                  dataset["status"] = dataset_status
+
+              if dataset_series_identifier:
+                  dataset["inSeries"] = dataset_series_identifier
+
+              if policy_uid:
+                  dataset["hasPolicy"] = policy_uid
+
+              if theme_identifiers:
+                  dataset["theme"] = theme_identifiers
+
+              if lineage_identifiers:
+                  dataset["wasDerivedFrom"] = lineage_identifiers
+
+              distribution = None
+
+              if is_yes(add_distribution):
+                  dataset["distribution"] = [distribution_identifier]
+
+                  distribution = {
+                      "identifier": distribution_identifier,
+                      "format": distribution_format,
+                      "accessURL": distribution_access_url,
+                  }
+
+                  if distribution_issued:
+                      distribution["issued"] = distribution_issued
+
+              quality_measurement = None
+
+              if is_yes(add_quality):
+                  quality_measurement = {
+                      "identifier": quality_measurement_identifier,
+                      "computedOn": dataset_identifier,
+                      "isMeasurementOf": metric_identifier,
+                      "value": quality_measurement_value_float,
+                  }
+
+                  if quality_measurement_date:
+                      quality_measurement["generatedAtTime"] = quality_measurement_date
+
+              dataset_block = dump_list_item_block(dataset)
+              catalog_text = insert_block_into_top_level_section(catalog_text, "datasets", dataset_block)
+
+              if distribution:
+                  distribution_block = dump_list_item_block(distribution)
+                  catalog_text = insert_block_into_top_level_section(
+                      catalog_text,
+                      "distributions",
+                      distribution_block
+                  )
+
+              if quality_measurement:
+                  quality_measurement_block = dump_list_item_block(quality_measurement)
+                  catalog_text = insert_block_into_top_level_section(
+                      catalog_text,
+                      "qualityMeasurements",
+                      quality_measurement_block
+                  )
+
+              print(f"Added dataset: {dataset_identifier}")
+
+              if distribution:
+                  print(f"Added distribution: {distribution_identifier}")
+
+              if quality_measurement:
+                  print(f"Added quality measurement: {quality_measurement_identifier}")
+
+          if is_remove_dataset:
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              print(f"Remove requested for dataset identifier: {repr(dataset_identifier)}")
+
+              reason = extract_field(issue_body, "Reason for removal")
+              remove_distributions_answer = extract_field(issue_body, "Remove linked distributions?")
+              remove_quality_measurements_answer = extract_field(issue_body, "Remove linked quality measurements?")
+              confirmation = extract_field(issue_body, "Confirm dataset removal")
+
+              errors = []
+
+              if not dataset_identifier:
+                  errors.append("Missing required field: Dataset identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this dataset should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm dataset removal by ticking the confirmation checkbox.")
+
+              target_dataset = None
+
+              for dataset in datasets:
+                  if isinstance(dataset, dict) and str(dataset.get("identifier", "")).strip() == dataset_identifier:
+                      target_dataset = dataset
+                      break
+
+              if target_dataset is None:
+                  errors.append(f"Dataset identifier not found: {dataset_identifier}")
+
+              linked_distribution_ids = []
+              linked_quality_measurement_ids = []
+
+              if target_dataset is not None:
+                  linked_distribution_ids = as_list(target_dataset.get("distribution"))
+
+                  linked_quality_measurement_ids = [
+                      str(qm.get("identifier")).strip()
+                      for qm in quality_measurements
+                      if isinstance(qm, dict)
+                      and str(qm.get("computedOn", "")).strip() == dataset_identifier
+                      and str(qm.get("identifier", "")).strip()
+                  ]
+
+              if linked_distribution_ids and not is_yes(remove_distributions_answer):
+                  errors.append(
+                      "Dataset has linked distributions. Select Yes for 'Remove linked distributions?' "
+                      f"or remove them separately first. Linked distributions: {', '.join(linked_distribution_ids)}"
+                  )
+
+              if linked_quality_measurement_ids and not is_yes(remove_quality_measurements_answer):
+                  errors.append(
+                      "Dataset has linked quality measurements. Select Yes for 'Remove linked quality measurements?' "
+                      f"or remove them separately first. Linked quality measurements: {', '.join(linked_quality_measurement_ids)}"
+                  )
+
+              if errors:
+                  fail(errors)
+
+              catalog_text = remove_list_items_by_identifier(
+                  catalog_text,
+                  "datasets",
+                  "identifier",
                   [dataset_identifier]
               )
 
- *            if linked_distribution*ids and is_yes(remove_distribution*_answer):
-                  catalo*_text = remove_list_items_by_ident*fier(
-                      catalo*_text,
-                      "dist*ibutions",
-                      "*dentifier",
-                      *inked_distribution_ids
-           *      )
+              if linked_distribution_ids and is_yes(remove_distributions_answer):
+                  catalog_text = remove_list_items_by_identifier(
+                      catalog_text,
+                      "distributions",
+                      "identifier",
+                      linked_distribution_ids
+                  )
 
-              if linked_q*ality_measurement_ids and is_yes(r*move_quality_measurements_answer):*                  catalog_text = r*move_list_items_by_identifier(
-   *                  catalog_text,
-  *                   "qualityMeasure*ents",
-                      "iden*ifier",
-                      link*d_quality_measurement_ids
-        *         )
+              if linked_quality_measurement_ids and is_yes(remove_quality_measurements_answer):
+                  catalog_text = remove_list_items_by_identifier(
+                      catalog_text,
+                      "qualityMeasurements",
+                      "identifier",
+                      linked_quality_measurement_ids
+                  )
 
-              print(f"*emoved dataset: {dataset_identifie*}")
+              print(f"Removed dataset: {dataset_identifier}")
 
-              if linked_distr*bution_ids and is_yes(remove_distr*butions_answer):
-                 *print(f"Removed linked distributio*s: {', '.join(linked_distribution_*ds)}")
+              if linked_distribution_ids and is_yes(remove_distributions_answer):
+                  print(f"Removed linked distributions: {', '.join(linked_distribution_ids)}")
 
-              if linked_qu*lity_measurement_ids and is_yes(re*ove_quality_measurements_answer):
-*                 print(f"Removed l*nked quality measurements: {', '.j*in(linked_quality_measurement_ids)*")
+              if linked_quality_measurement_ids and is_yes(remove_quality_measurements_answer):
+                  print(f"Removed linked quality measurements: {', '.join(linked_quality_measurement_ids)}")
 
           if is_edit_dataset:
-*             dataset_identifier = *xtract_field(issue_body, "Dataset *dentifier")
-              print(f"*dit requested for dataset identifi*r: {repr(dataset_identifier)}")
+              dataset_identifier = extract_field(issue_body, "Dataset identifier")
+              print(f"Edit requested for dataset identifier: {repr(dataset_identifier)}")
 
- *            new_title = extract_fi*ld(issue_body, "Dataset title")
-  *           new_description = extra*t_field(issue_body, "Dataset descr*ption")
-              new_publishe* = extract_field(issue_body, "Publ*sher name")
-              new_stat*s = extract_field(issue_body, "Dat*set status")
-              new_lic*nse = extract_field(issue_body, "L*cense title or URL")
-             *new_series = extract_field(issue_b*dy, "Dataset series identifier")
- *            new_policy = extract_f*eld(issue_body, "Policy UID")
-    *         new_themes = extract_line*(issue_body, "Theme / concept iden*ifiers")
-              new_lineage*= extract_lines(issue_body, "Sourc* / input dataset identifiers")
-   *          confirmation = extract_f*eld(issue_body, "Confirm dataset e*it")
+              new_title = extract_field(issue_body, "Dataset title")
+              new_description = extract_field(issue_body, "Dataset description")
+              new_publisher = extract_field(issue_body, "Publisher name")
+              new_status = extract_field(issue_body, "Dataset status")
+              new_license = extract_field(issue_body, "License title or URL")
+              new_series = extract_field(issue_body, "Dataset series identifier")
+              new_policy = extract_field(issue_body, "Policy UID")
+              new_themes = extract_lines(issue_body, "Theme / concept identifiers")
+              new_lineage = extract_lines(issue_body, "Source / input dataset identifiers")
+              confirmation = extract_field(issue_body, "Confirm dataset edit")
 
               errors = []
 
- *            if not dataset_identif*er:
-                  errors.appen*("Missing required field: Dataset *dentifier.")
+              if not dataset_identifier:
+                  errors.append("Missing required field: Dataset identifier.")
 
-              if "I *onfirm that this dataset metadata *hould be updated." not in confirma*ion:
-                  errors.appe*d("You must confirm dataset edit b* ticking the confirmation checkbox*")
+              if "I confirm that this dataset metadata should be updated." not in confirmation:
+                  errors.append("You must confirm dataset edit by ticking the confirmation checkbox.")
 
-              target_dataset =*None
+              target_dataset = None
 
-              for dataset in*datasets:
-                  if isi*stance(dataset, dict) and str(data*et.get("identifier", "")).strip() *= dataset_identifier:
-            *         target_dataset = dataset
-*                     break
+              for dataset in datasets:
+                  if isinstance(dataset, dict) and str(dataset.get("identifier", "")).strip() == dataset_identifier:
+                      target_dataset = dataset
+                      break
 
-      *       if target_dataset is None:
-*                 errors.append(f"D*taset identifier not found: {datas*t_identifier}")
+              if target_dataset is None:
+                  errors.append(f"Dataset identifier not found: {dataset_identifier}")
 
-              sup*lied_fields = [
+              supplied_fields = [
                   new_title,
                   new_description,
                   new_publisher,
@@ -932,140 +926,145 @@ jobs:
                   new_series,
                   new_policy,
                   "\n".join(new_themes),
-    *             "\n".join(new_lineage*,
+                  "\n".join(new_lineage),
               ]
 
-              i* not any(str(value).strip() for va*ue in supplied_fields):
-          *       errors.append("No editable *ields were provided. Fill at least*one optional field to update the d*taset.")
+              if not any(str(value).strip() for value in supplied_fields):
+                  errors.append("No editable fields were provided. Fill at least one optional field to update the dataset.")
 
-              require_ex*sting(new_series, series_ids, "Dat*set series identifier", errors)
-  *           require_existing(new_po*icy, policy_uids, "Policy UID", er*ors)
-              require_all_exi*ting(new_themes, concept_ids, "The*e / concept identifiers", errors)
-*              lineage_ids_without_*elf = [lineage_id for lineage_id in new_lineage if lineage_id != dataset_identifier]
-              requi*e_all_existing(lineage_ids_without*self, dataset_ids, "Source / input*dataset identifiers", errors)
+              require_existing(new_series, series_ids, "Dataset series identifier", errors)
+              require_existing(new_policy, policy_uids, "Policy UID", errors)
+              require_all_existing(new_themes, concept_ids, "Theme / concept identifiers", errors)
 
-   *          if dataset_identifier in*new_lineage:
-                  err*rs.append("A dataset cannot refere*ce itself in Source / input datase* identifiers.")
+              lineage_ids_without_self = [lineage_id for lineage_id in new_lineage if lineage_id != dataset_identifier]
+              require_all_existing(lineage_ids_without_self, dataset_ids, "Source / input dataset identifiers", errors)
 
-              if *rrors:
-                  fail(erro*s)
+              if dataset_identifier in new_lineage:
+                  errors.append("A dataset cannot reference itself in Source / input dataset identifiers.")
 
-              updated_dataset * copy.deepcopy(target_dataset)
+              if errors:
+                  fail(errors)
 
-  *           if new_title:
-         *        updated_dataset["title"] =*new_title
+              updated_dataset = copy.deepcopy(target_dataset)
 
-              if new_de*cription:
-                  update*_dataset["description"] = new_desc*iption
+              if new_title:
+                  updated_dataset["title"] = new_title
 
-              if new_publi*her:
-                  updated_dat*set["publisher"] = {
-             *        "name": new_publisher
-    *             }
+              if new_description:
+                  updated_dataset["description"] = new_description
 
-              if n*w_status:
-                  update*_dataset["status"] = new_status
+              if new_publisher:
+                  updated_dataset["publisher"] = {
+                      "name": new_publisher
+                  }
 
- *            if new_license:
-      *           updated_dataset["license"] = {
-                      "titl*": new_license
-                  }*
+              if new_status:
+                  updated_dataset["status"] = new_status
+
+              if new_license:
+                  updated_dataset["license"] = {
+                      "title": new_license
+                  }
+
               if new_series:
-    *             updated_dataset["inSeries"] = new_series
+                  updated_dataset["inSeries"] = new_series
 
-              *f new_policy:
-                  up*ated_dataset["hasPolicy"] = new_po*icy
+              if new_policy:
+                  updated_dataset["hasPolicy"] = new_policy
 
               if new_themes:
-*                 updated_dataset["theme"] = new_themes
+                  updated_dataset["theme"] = new_themes
 
-             *if new_lineage:
-                  *pdated_dataset["wasDerivedFrom"] =*new_lineage
+              if new_lineage:
+                  updated_dataset["wasDerivedFrom"] = new_lineage
 
-              catalog*text = replace_list_item_by_identi*ier(
-                  catalog_tex*,
+              catalog_text = replace_list_item_by_identifier(
+                  catalog_text,
                   "datasets",
-  *               "identifier",
-     *            dataset_identifier,
-  *               updated_dataset
-   *          )
+                  "identifier",
+                  dataset_identifier,
+                  updated_dataset
+              )
 
-              print(f*Updated dataset: {dataset_identifi*r}")
+              print(f"Updated dataset: {dataset_identifier}")
 
-          if is_add_concept:*              concept_identifier =*extract_field(issue_body, "Concept*identifier")
-              pref_la*el = extract_field(issue_body, "Pr*ferred label")
-              defin*tion = extract_field(issue_body, "*oncept definition")
-              *lt_label = extract_field(issue_bod*, "Alternative label")
-           *  example = extract_field(issue_bo*y, "Example")
-              confir*ation = extract_field(issue_body, *Confirm concept addition")
-
-      *       errors = []
-
-              *f not pref_label:
-                * errors.append("Missing required f*eld: Preferred label.")
-
-         *    if not definition:
-           *      errors.append("Missing requi*ed field: Concept definition.")
-
- *            if "I confirm that thi* concept should be added to the ca*alog." not in confirmation:
-      *           errors.append("You must*confirm concept addition by tickin* the confirmation checkbox.")
-
-   *          if any(marker in definit*on for marker in ["identifier:", "prefLabel:", "concepts:", "datasets:"]):
-                  errors.appe*d("Concept definition must be plai* text, not YAML. Do not paste a YA*L example into the definition fiel*.")
-
-              if pref_label a*d not concept_identifier:
-        *         concept_identifier = f"ex*{slugify(pref_label)}"
-
-          *   if concept_identifier in concep*_ids:
-                  errors.app*nd(f"Concept identifier already ex*sts: {concept_identifier}")
-
-     *        if errors:
-               *  fail(errors)
-
-              conc*pt = {
-                  "prefLabe*": pref_label,
-                  "*dentifier": concept_identifier,
-  *               "definition": defin*tion,
-              }
-
-           *  if alt_label:
-                  *oncept["altLabel"] = alt_label
-
-  *           if example:
-           *      concept["example"] = example*
-              concept_block = dum*_list_item_block(concept)
-        *     catalog_text = insert_block_i*to_top_level_section(catalog_text,*"concepts", concept_block)
-
-      *       print(f"Added concept: {con*ept_identifier}")
-
-          if is*remove_concept:
-              conc*pt_identifier = extract_field(issu*_body, "Concept identifier")
-     *        reason = extract_field(iss*e_body, "Reason for removal")
-    *         confirmation = extract_fi*ld(issue_body, "Confirm concept re*oval")
+          if is_add_concept:
+              concept_identifier = extract_field(issue_body, "Concept identifier")
+              pref_label = extract_field(issue_body, "Preferred label")
+              definition = extract_field(issue_body, "Concept definition")
+              alt_label = extract_field(issue_body, "Alternative label")
+              example = extract_field(issue_body, "Example")
+              confirmation = extract_field(issue_body, "Confirm concept addition")
 
               errors = []
-*              if not concept_ident*fier:
-                  errors.app*nd("Missing required field: Concep* identifier.")
 
-              if n*t reason:
-                  errors*append("Missing required field: Re*son for removal.")
+              if not pref_label:
+                  errors.append("Missing required field: Preferred label.")
 
-              *f "I confirm that this concept sho*ld be removed from the catalog." n*t in confirmation:
-               *  errors.append("You must confirm *oncept removal by ticking the conf*rmation checkbox.")
+              if not definition:
+                  errors.append("Missing required field: Concept definition.")
 
-             *target_concept = None
+              if "I confirm that this concept should be added to the catalog." not in confirmation:
+                  errors.append("You must confirm concept addition by ticking the confirmation checkbox.")
 
-           *  for concept in concepts:
-       *          if isinstance(concept, d*ct) and str(concept.get("identifie*", "")).strip() == concept_identif*er:
-                      target_c*ncept = concept
-                  *   break
+              if any(marker in definition for marker in ["identifier:", "prefLabel:", "concepts:", "datasets:"]):
+                  errors.append("Concept definition must be plain text, not YAML. Do not paste a YAML example into the definition field.")
 
-              if target_*oncept is None:
-                  *rrors.append(f"Concept identifier *ot found: {concept_identifier}")
+              if pref_label and not concept_identifier:
+                  concept_identifier = f"ex:{slugify(pref_label)}"
 
-*             referencing_datasets * []
+              if concept_identifier in concept_ids:
+                  errors.append(f"Concept identifier already exists: {concept_identifier}")
 
-              for dataset in *atasets:
+              if errors:
+                  fail(errors)
+
+              concept = {
+                  "prefLabel": pref_label,
+                  "identifier": concept_identifier,
+                  "definition": definition,
+              }
+
+              if alt_label:
+                  concept["altLabel"] = alt_label
+
+              if example:
+                  concept["example"] = example
+
+              concept_block = dump_list_item_block(concept)
+              catalog_text = insert_block_into_top_level_section(catalog_text, "concepts", concept_block)
+
+              print(f"Added concept: {concept_identifier}")
+
+          if is_remove_concept:
+              concept_identifier = extract_field(issue_body, "Concept identifier")
+              reason = extract_field(issue_body, "Reason for removal")
+              confirmation = extract_field(issue_body, "Confirm concept removal")
+
+              errors = []
+
+              if not concept_identifier:
+                  errors.append("Missing required field: Concept identifier.")
+
+              if not reason:
+                  errors.append("Missing required field: Reason for removal.")
+
+              if "I confirm that this concept should be removed from the catalog." not in confirmation:
+                  errors.append("You must confirm concept removal by ticking the confirmation checkbox.")
+
+              target_concept = None
+
+              for concept in concepts:
+                  if isinstance(concept, dict) and str(concept.get("identifier", "")).strip() == concept_identifier:
+                      target_concept = concept
+                      break
+
+              if target_concept is None:
+                  errors.append(f"Concept identifier not found: {concept_identifier}")
+
+              referencing_datasets = []
+
+              for dataset in datasets:
                   if not isinstance(dataset, dict):
                       continue
 
@@ -1526,126 +1525,6 @@ jobs:
               )
 
               print(f"Removed policy: {policy_uid}")
-
-          if is_add_lineage_link:
-              target_dataset_identifier = extract_field(issue_body, "Target dataset identifier")
-              source_dataset_identifier = extract_field(issue_body, "Source / input dataset identifier")
-              confirmation = extract_field(issue_body, "Confirm lineage link addition")
-
-              errors = []
-
-              if not target_dataset_identifier:
-                  errors.append("Missing required field: Target dataset identifier.")
-
-              if not source_dataset_identifier:
-                  errors.append("Missing required field: Source / input dataset identifier.")
-
-              if "I confirm that this lineage link should be added to the catalog." not in confirmation:
-                  errors.append("You must confirm lineage link addition by ticking the confirmation checkbox.")
-
-              require_existing(target_dataset_identifier, dataset_ids, "Target dataset identifier", errors)
-              require_existing(source_dataset_identifier, dataset_ids, "Source / input dataset identifier", errors)
-
-              if target_dataset_identifier and source_dataset_identifier and target_dataset_identifier == source_dataset_identifier:
-                  errors.append("A dataset cannot be derived from itself.")
-
-              target_dataset = None
-
-              for dataset in datasets:
-                  if isinstance(dataset, dict) and str(dataset.get("identifier", "")).strip() == target_dataset_identifier:
-                      target_dataset = dataset
-                      break
-
-              existing_lineage = []
-
-              if target_dataset is not None:
-                  existing_lineage = as_list(target_dataset.get("wasDerivedFrom"))
-
-                  if source_dataset_identifier in existing_lineage:
-                      errors.append(
-                          f"Lineage link already exists: {target_dataset_identifier} wasDerivedFrom {source_dataset_identifier}"
-                      )
-
-              if errors:
-                  fail(errors)
-
-              updated_dataset = copy.deepcopy(target_dataset)
-              updated_dataset["wasDerivedFrom"] = existing_lineage + [source_dataset_identifier]
-
-              catalog_text = replace_list_item_by_identifier(
-                  catalog_text,
-                  "datasets",
-                  "identifier",
-                  target_dataset_identifier,
-                  updated_dataset
-              )
-
-              print(f"Added lineage link: {source_dataset_identifier} -> {target_dataset_identifier}")
-
-          if is_remove_lineage_link:
-              target_dataset_identifier = extract_field(issue_body, "Target dataset identifier")
-              source_dataset_identifier = extract_field(issue_body, "Source / input dataset identifier")
-              reason = extract_field(issue_body, "Reason for removal")
-              confirmation = extract_field(issue_body, "Confirm lineage link removal")
-
-              errors = []
-
-              if not target_dataset_identifier:
-                  errors.append("Missing required field: Target dataset identifier.")
-
-              if not source_dataset_identifier:
-                  errors.append("Missing required field: Source / input dataset identifier.")
-
-              if not reason:
-                  errors.append("Missing required field: Reason for removal.")
-
-              if "I confirm that this lineage link should be removed from the catalog." not in confirmation:
-                  errors.append("You must confirm lineage link removal by ticking the confirmation checkbox.")
-
-              require_existing(target_dataset_identifier, dataset_ids, "Target dataset identifier", errors)
-              require_existing(source_dataset_identifier, dataset_ids, "Source / input dataset identifier", errors)
-
-              target_dataset = None
-
-              for dataset in datasets:
-                  if isinstance(dataset, dict) and str(dataset.get("identifier", "")).strip() == target_dataset_identifier:
-                      target_dataset = dataset
-                      break
-
-              existing_lineage = []
-
-              if target_dataset is not None:
-                  existing_lineage = as_list(target_dataset.get("wasDerivedFrom"))
-
-                  if source_dataset_identifier not in existing_lineage:
-                      errors.append(
-                          f"Lineage link not found: {target_dataset_identifier} wasDerivedFrom {source_dataset_identifier}"
-                      )
-
-              if errors:
-                  fail(errors)
-
-              updated_dataset = copy.deepcopy(target_dataset)
-              updated_lineage = [
-                  lineage_identifier
-                  for lineage_identifier in existing_lineage
-                  if lineage_identifier != source_dataset_identifier
-              ]
-
-              if updated_lineage:
-                  updated_dataset["wasDerivedFrom"] = updated_lineage
-              else:
-                  updated_dataset.pop("wasDerivedFrom", None)
-
-              catalog_text = replace_list_item_by_identifier(
-                  catalog_text,
-                  "datasets",
-                  "identifier",
-                  target_dataset_identifier,
-                  updated_dataset
-              )
-
-              print(f"Removed lineage link: {source_dataset_identifier} -> {target_dataset_identifier}")
 
           CATALOG_PATH.write_text(catalog_text, encoding="utf-8")
 
