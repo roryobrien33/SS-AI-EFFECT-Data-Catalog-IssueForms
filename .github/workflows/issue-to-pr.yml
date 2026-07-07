@@ -10,6 +10,23 @@ permissions:
   issues: write
 
 jobs:
+debug_event:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Debug issue-to-pr trigger
+        run: |
+          echo "issue-to-pr.yml was triggered"
+          echo "Event action: ${{ github.event.action }}"
+          echo "Issue number: ${{ github.event.issue.number }}"
+          echo "Issue title: ${{ github.event.issue.title }}"
+          echo "Issue labels:"
+          echo '${{ toJson(github.event.issue.labels.*.name) }}'
+          echo ""
+          echo "Issue body:"
+          cat <<'EOF'
+          ${{ github.event.issue.body }}
+          EOF
   intake:
     if: |
       contains(github.event.issue.labels.*.name, 'add-dataset') ||
