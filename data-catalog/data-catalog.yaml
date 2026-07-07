@@ -44,10 +44,11 @@ datasets:
     inSeries: ex:uc1-multi-energy-sector-coupling
     hasPolicy: plcy:open-information
     theme:
-      - ex:ai-system
-      - ex:sector-coupling
-      - ex:energy
-
+    - ex:ai-system
+    - ex:sector-coupling
+    - ex:energy
+    wasDerivedFrom:
+    - ex:uc1-training-dataset
   - identifier: ex:uc1-training-data-procedures
     title: Training Data Collection and Processing Procedures for UC1
     publisher:
