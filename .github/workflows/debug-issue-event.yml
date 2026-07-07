@@ -1,0 +1,27 @@
+name: Debug Issue Event
+
+on:
+  issues:
+    types: [opened, edited, reopened, labeled, unlabeled]
+
+permissions:
+  issues: read
+  contents: read
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print issue event details
+        run: |
+          echo "Event action: ${{ github.event.action }}"
+          echo "Issue number: ${{ github.event.issue.number }}"
+          echo "Issue title: ${{ github.event.issue.title }}"
+          echo "Issue labels:"
+          echo '${{ toJson(github.event.issue.labels.*.name) }}'
+          echo ""
+          echo "Issue body:"
+          cat <<'EOF'
+          ${{ github.event.issue.body }}
+          EOF
