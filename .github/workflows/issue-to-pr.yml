@@ -27,7 +27,8 @@ debug_event:
           cat <<'EOF'
           ${{ github.event.issue.body }}
           EOF
-  intake:
+  
+intake:
     if: |
       contains(github.event.issue.labels.*.name, 'add-dataset') ||
       contains(github.event.issue.labels.*.name, 'remove-dataset') ||
@@ -41,73 +42,9 @@ debug_event:
       contains(github.event.issue.labels.*.name, 'add-policy') ||
       contains(github.event.issue.labels.*.name, 'remove-policy') ||
       contains(github.event.issue.labels.*.name, 'add-lineage-link') ||
-      contains(github.event.issue.labels.*.name, 'remove-lineage-link') ||
-*     (
-        contains(github.eve*t.issue.body, '### Dataset identif*er') &&
-        contains(github.ev*nt.issue.body, '### Dataset title'* &&
-        contains(github.event.*ssue.body, '### Dataset descriptio*')
-      ) ||
-      (
-        cont*ins(github.event.issue.body, '### *ataset identifier') &&
-        con*ains(github.event.issue.body, '###*Reason for removal') &&
-        co*tains(github.event.issue.body, '##* Confirm dataset removal')
-      )*||
-      (
-        contains(github*event.issue.body, '### Dataset ide*tifier') &&
-        contains(githu*.event.issue.body, '### Confirm da*aset edit')
-      ) ||
-      (
-   *    contains(github.event.issue.bo*y, '### Preferred label') &&
-     *  contains(github.event.issue.body* '### Concept definition') &&
-    *   contains(github.event.issue.bod*, '### Confirm concept addition')
-*     ) ||
-      (
-        contains*github.event.issue.body, '### Conc*pt identifier') &&
-        contain*(github.event.issue.body, '### Rea*on for removal') &&
-        contai*s(github.event.issue.body, '### Co*firm concept removal')
-      ) ||
-*     (
-        contains(github.eve*t.issue.body, '### Preferred label*) &&
-        contains(github.event*issue.body, '### Metric definition*) &&
-        contains(github.event*issue.body, '### Confirm metric ad*ition')
-      ) ||
-      (
-       *contains(github.event.issue.body, *### Metric identifier') &&
-       *contains(github.event.issue.body, *### Reason for removal') &&
-      * contains(github.event.issue.body,*'### Confirm metric removal')
-    * ) ||
-      (
-        contains(git*ub.event.issue.body, '### Dataset *dentifier') &&
-        contains(gi*hub.event.issue.body, '### Metric *dentifier') &&
-        contains(gi*hub.event.issue.body, '### Quality*measurement value') &&
-        con*ains(github.event.issue.body, '###*Confirm quality measurement additi*n')
-      ) ||
-      (
-        con*ains(github.event.issue.body, '###*Quality measurement identifier') &*
-        contains(github.event.iss*e.body, '### Reason for removal') *&
-        contains(github.event.is*ue.body, '### Confirm quality meas*rement removal')
-      ) ||
-      *
-        contains(github.event.iss*e.body, '### Policy title') &&
-   *    contains(github.event.issue.bo*y, '### Policy description') &&
-  *     contains(github.event.issue.b*dy, '### Confirm policy addition')*      ) ||
-      (
-        contain*(github.event.issue.body, '### Pol*cy UID') &&
-        contains(githu*.event.issue.body, '### Reason for*removal') &&
-        contains(gith*b.event.issue.body, '### Confirm p*licy removal')
-      ) ||
-      (
-*       contains(github.event.issue*body, '### Target dataset identifi*r') &&
-        contains(github.eve*t.issue.body, '### Source / input *ataset identifier') &&
-        con*ains(github.event.issue.body, '###*Confirm lineage link addition')
-  *   ) ||
-      (
-        contains(g*thub.event.issue.body, '### Target*dataset identifier') &&
-        co*tains(github.event.issue.body, '##* Source / input dataset identifier*) &&
-        contains(github.event*issue.body, '### Confirm lineage l*nk removal')
-      )
+      contains(github.event.issue.labels.*.name, 'remove-lineage-link')
 
-    runs-on:*ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - *ame: Checkout
