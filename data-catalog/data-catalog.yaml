@@ -35,7 +35,7 @@ datasets:
       - ex:ai-testing-data
       - ex:energy
       - ex:german-node
-      - ex:ENEL
+      - ex:enel
       - ex:grid
       - ex:grid-data
       - ex:dso-data
