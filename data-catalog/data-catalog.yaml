@@ -20,7 +20,7 @@ dataCatalog:
   status: draft
 
 datasets:
-  - identifier: ex:german-node-pandapowernet.auxiliary - overload
+  - identifier: ex:german-node-pandapowernet.auxiliary-overload
     title:  Historical Data (pandapowernet(PPNet)) - Overload Scenario
     publisher:
       name: ENEL
