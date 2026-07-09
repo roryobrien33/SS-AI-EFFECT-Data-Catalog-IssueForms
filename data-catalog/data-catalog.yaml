@@ -20,6 +20,29 @@ dataCatalog:
   status: draft
 
 datasets:
+  - identifier: ex:german-node-pandapowernet.auxiliary - overload
+    title:  Historical Data (pandapowernet(PPNet)) - Overload Scenario
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:overload-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:german-node
+      - ex:ENEL
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    
   - identifier: ex:uc1-regulatory-compliance
     title: Regulatory Compliance Strategy for UC1
     publisher:
@@ -33,6 +56,7 @@ datasets:
       - ex:regulatory-compliance
       - ex:sector-coupling
       - ex:energy
+      
 
   - identifier: ex:uc1-ai-system
     title: AI System for UC1
@@ -422,6 +446,53 @@ datasets:
     theme:
     - ex:energy
 concepts:
+  - prefLabel: German Node - Overload Scenario Model
+    identifier: ex:overload-model
+    altLabel: overload-model 
+  
+  - prefLabel: AI Training Data
+    identifier: ex:ai-training-data
+    altLabel: training-data  
+
+  - prefLabel: AI Testing Data
+    identifier: ex:ai-testing-data
+    altLabel: testing-data  
+     
+  - prefLabel: German-Node
+    identifier: ex:german-node
+    altLabel: TEF-Node-German
+
+  - prefLabel: ENEL-DSO
+    identifier: ex:enel
+    altLabel: ENEL-Italy
+
+  - prefLabel: grid
+    identifier: ex:grid
+    altLabel: power-grid
+    
+  - prefLabel: grid-data
+    identifier: ex:grid-data
+    altLabel: power-data
+    
+  - prefLabel: distribution-grid-data
+    identifier: ex:dso-data
+    altLabel: dso-grid-data
+ 
+  - prefLabel: grid-model
+    identifier: ex:grid-model
+    altLabel: grid-simulation
+
+  - prefLabel: measurement-data
+    identifier: ex:measurment-data
+    altLabel: historical-data
+
+  - prefLabel: grid-actions
+    identifier: ex:grid-actions
+    altLabel: switching
+
+  
+  
+  
   - prefLabel: energy
     identifier: ex:energy
     definition: Energy domain related data
@@ -471,6 +542,24 @@ concepts:
     identifier: ex:energy-community
     definition: Local energy communities
 series:
+  - identifier: ex:german-node
+    title: AI-Effect - German Node
+    description: |
+      This series contains all the datasets related to AI-Effect TEF German node.
+    publisher:
+      name: EPRI
+  
+  - identifier: ex:german-node-overload-series
+    title: German Node - Overload Scenario Series
+    description: |
+      TEST ONLY.
+      This is a child series used to test whether DatasetSeries can belong
+      to another DatasetSeries using dcat:inSeries.
+    publisher:
+      name: EPRI
+
+    inSeries: ex:german-node
+
   - identifier: ex:uc1-multi-energy-sector-coupling
     title: UC1 - Multi Energy and Sector Coupling
     description: |
