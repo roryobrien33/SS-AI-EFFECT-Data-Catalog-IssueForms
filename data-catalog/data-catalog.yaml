@@ -20,21 +20,43 @@ dataCatalog:
   status: draft
 
 datasets:
-  - identifier: ex:german-node-pandapowernet.auxiliary-overload
-    title:  Historical Data (pandapowernet(PPNet)) - Overload Scenario
+  # - identifier: ex:german-node-pandapowernet.auxiliary-overload
+  #   title:  Historical Data (pandapowernet(PPNet)) - Overload Scenario
+  #   publisher:
+  #     name: ENEL
+  #   status: published
+  #   license:
+  #     title: TBD
+  #   inSeries: ex:german-node
+  #   hasPolicy: plcy:internal-use-only
+  #   theme:
+  #     - ex:overload-model
+  #     - ex:ai-training-data
+  #     - ex:ai-testing-data
+  #     - ex:energy
+  #     # - ex:german-node
+  #     - ex:enel
+  #     - ex:grid
+  #     - ex:grid-data
+  #     - ex:dso-data
+  #     - ex:grid-model
+  #     - ex:measurment-data
+  #     - ex:grid-actions
+
+  - identifier: ex:DW00.1.382280-VE_202401
+    title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202401
     publisher:
       name: ENEL
     status: published
     license:
       title: TBD
-    inSeries: ex:german-node
+    inSeries: ex:german-node-overload-series
     hasPolicy: plcy:internal-use-only
     theme:
-      - ex:overload-model
+      -ex:overload-model
       - ex:ai-training-data
       - ex:ai-testing-data
       - ex:energy
-      # - ex:german-node
       - ex:enel
       - ex:grid
       - ex:grid-data
@@ -42,6 +64,7 @@ datasets:
       - ex:grid-model
       - ex:measurment-data
       - ex:grid-actions
+
     
   - identifier: ex:uc1-regulatory-compliance
     title: Regulatory Compliance Strategy for UC1
