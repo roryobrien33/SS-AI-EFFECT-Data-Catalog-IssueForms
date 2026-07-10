@@ -34,7 +34,7 @@ datasets:
       - ex:ai-training-data
       - ex:ai-testing-data
       - ex:energy
-      - ex:german-node
+      # - ex:german-node
       - ex:enel
       - ex:grid
       - ex:grid-data
@@ -458,9 +458,9 @@ concepts:
     identifier: ex:ai-testing-data
     altLabel: testing-data  
      
-  - prefLabel: German-Node
-    identifier: ex:german-node
-    altLabel: TEF-Node-German
+  # - prefLabel: German-Node
+  #   identifier: ex:german-node
+  #   altLabel: TEF-Node-German
 
   - prefLabel: ENEL-DSO
     identifier: ex:enel
