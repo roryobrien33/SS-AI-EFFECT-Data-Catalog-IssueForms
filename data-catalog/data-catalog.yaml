@@ -53,7 +53,7 @@ datasets:
     inSeries: ex:german-node-overload-series
     hasPolicy: plcy:internal-use-only
     theme:
-      -ex:overload-model
+      - ex:overload-model
       - ex:ai-training-data
       - ex:ai-testing-data
       - ex:energy
