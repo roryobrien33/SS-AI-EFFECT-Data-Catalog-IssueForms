@@ -45,6 +45,7 @@ datasets:
   
 #GERMAN NODE - OVERLOAD SCENARIO DATASETS
   - identifier: ex:DW00.1.382280-VE_202401
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202401
     publisher:
       name: ENEL
@@ -69,6 +70,7 @@ datasets:
       - ex:DW00.1.382280-VE_202401-d1
 
   - identifier: ex:DW00.1.382280-VE_202402
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202402
     publisher:
       name: ENEL
@@ -91,6 +93,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202403
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202403
     publisher:
       name: ENEL
@@ -113,6 +116,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202404
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202404
     publisher:
       name: ENEL
@@ -135,6 +139,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202405
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202405
     publisher:
       name: ENEL
@@ -157,6 +162,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202406
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202406
     publisher:
       name: ENEL
@@ -179,6 +185,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202407
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202407
     publisher:
       name: ENEL
@@ -201,6 +208,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202408
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202408
     publisher:
       name: ENEL
@@ -223,6 +231,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202409
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202409
     publisher:
       name: ENEL
@@ -245,6 +254,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202410
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202410
     publisher:
       name: ENEL
@@ -267,6 +277,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202411
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202411
     publisher:
       name: ENEL
@@ -289,6 +300,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:DW00.1.382280-VE_202412
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202412
     publisher:
       name: ENEL
@@ -311,6 +323,7 @@ datasets:
       - ex:grid-actions
 
   - identifier: ex:ppnet_DW00.1.382280-VE_202412
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overload Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overload Scenario - pandapower.auxiliary - ppnet_DW00.1.382280-VE_202412
     publisher:
       name: ENEL
@@ -1136,49 +1149,61 @@ distributions:
 
   - identifier: ex:DW00.1.382280-VE_202402-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQDUZrJBHOZCSrYjd3ArzQi3AZKMJFY-FQ5dfUaduYuL4ds?e=yseKZf
 
   - identifier: ex:DW00.1.382280-VE_202403-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQD9OI9qYoBUTZSY_FtJzA4LAfJNZtiqmg-rwasxmbC-jec?e=LpItsg
 
   - identifier: ex:DW00.1.382280-VE_202404-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC4-oG0z6z5TrZNxO4Zr1JXAaeh3-NI6azyLq4b0kYMBFk?e=DRrGDe
 
   - identifier: ex:DW00.1.382280-VE_202405-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC-ggee8JngQakcQ94OkH9RAfzsRbVJ_7EoYST6SvN24Wk?e=fH7M8S
 
   - identifier: ex:DW00.1.382280-VE_202406-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQCi8zOPcc_NQqiZi4kdS-j2AV8VYuufIqWJExQ0OntOR08?e=Vd4ydq
 
   - identifier: ex:DW00.1.382280-VE_202407-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQDa6OBq-JOpQKBaLVqBZK72ARKgF98GWWJa4DM6kYZbfUA?e=JmZ0V7
 
   - identifier: ex:DW00.1.382280-VE_202408-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQAeFqBfLMm9SIRN9t4GF28eAcfrNgpTJDYlVFGWoBOYLAU?e=McsFjJ
     
   - identifier: ex:DW00.1.382280-VE_202409-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQCD0N5Vx9nGRrY13ISxERTEAQduiAA27Hh2hJxEs4X8qe0?e=3LAir7
 
   - identifier: ex:DW00.1.382280-VE_202410-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQBFWWnSiL2JSp5DUmAfJ20vARRLK7YO1pm29AmQVwqqP5Q?e=zag1Xo
   
   - identifier: ex:DW00.1.382280-VE_202411-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC8APANHPlwQIn4jBkm2kgeARY1qFctvwz0aMTC-wDbHHY?e=o3fiAU
 
   - identifier: ex:DW00.1.382280-VE_202412-d1
     format: json
+    issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC7bXP-3b67T5srAxLLsLyqAZaacjLNeGNsrfLWHxCHQrc?e=pdZY99
    
   - identifier: ex:ppnet_DW00.1.382280-VE_202412-d1
     format: json
+    issued: 2026-02-11
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC-aNIBrkLkTKkDZM9PZ1dNAXbSwyH3qixm3qDO49Na2a8?e=ceuwoY
    
