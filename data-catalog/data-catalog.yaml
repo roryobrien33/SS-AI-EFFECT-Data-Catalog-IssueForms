@@ -65,6 +65,8 @@ datasets:
       - ex:grid-model
       - ex:measurment-data
       - ex:grid-actions
+    distribution:
+      - ex:DW00.1.382280-VE_202401-d1
 
   - identifier: ex:DW00.1.382280-VE_202402
     title: German Node - Overload Scenario - Load Profile DW00.1.382280-VE_202402
@@ -1127,7 +1129,7 @@ distributions:
     accessURL: https://example.com/data.csv
 
   #GERMAN-NODE OVERLOAD DATASET DISTRIBUTIONS
-  - identifier: ex:DW00.1.382280-VE_202401
+  - identifier: ex:DW00.1.382280-VE_202401-d1
     format: json
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQBV2J5CU8U9T7cE3LaVsDA_AQMlUXUbCD0d7MvolXw0Q3o?e=Xv9RSh
 
