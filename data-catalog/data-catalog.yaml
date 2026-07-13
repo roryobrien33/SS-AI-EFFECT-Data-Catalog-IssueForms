@@ -398,7 +398,7 @@ datasets:
     
   - identifier: ex:DW00.1.385218-BI_202402
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202402
     publisher:
       name: ENEL
     status: published
@@ -423,7 +423,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202403
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202403
     publisher:
       name: ENEL
     status: published
@@ -448,7 +448,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202404
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202404
     publisher:
       name: ENEL
     status: published
@@ -473,7 +473,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202405
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202405
     publisher:
       name: ENEL
     status: published
@@ -498,7 +498,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202406
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202406
     publisher:
       name: ENEL
     status: published
@@ -523,7 +523,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202407
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202407
     publisher:
       name: ENEL
     status: published
@@ -548,7 +548,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202408
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202408
     publisher:
       name: ENEL
     status: published
@@ -573,7 +573,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202409
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202409
     publisher:
       name: ENEL
     status: published
@@ -598,7 +598,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202410
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202410
     publisher:
       name: ENEL
     status: published
@@ -623,7 +623,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202411
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202411
     publisher:
       name: ENEL
     status: published
@@ -648,7 +648,7 @@ datasets:
 
   - identifier: ex:DW00.1.385218-BI_202412
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202412
     publisher:
       name: ENEL
     status: published
@@ -673,7 +673,7 @@ datasets:
 
   - identifier: ex:ppnet_DW00.1.385218-BI_202412
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
-    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    title: German Node - Overvoltage Scenario - pandapower.auxiliary - DW00.1.385218-BI_202412
     publisher:
       name: ENEL
     status: published
@@ -695,6 +695,333 @@ datasets:
       - ex:grid-actions
     distribution:
       - ex:ppnet_DW00.1.385218-BI_202412-d1
+
+#################################################################
+#GERMAN NODE - OVERVOLTAGE SCENARIO DATASETS
+  - identifier: ex:DY00.1.380402-01_202401
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202401
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202401-d1
+
+  - identifier: ex:DY00.1.380402-01_202402
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202402
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202402-d1
+
+    - identifier: ex:DY00.1.380402-01_202403
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202403
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202403-d1
+
+  - identifier: ex:DY00.1.380402-01_202404
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202404
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202404-d1
+
+  - identifier: ex:DY00.1.380402-01_202405
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202405
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202405-d1
+
+  - identifier: ex:DY00.1.380402-01_202406
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202406
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202406-d1
+
+    - identifier: ex:DY00.1.380402-01_202407
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202407
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202407-d1
+
+  - identifier: ex:DY00.1.380402-01_202408
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202408
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202408-d1
+
+  - identifier: ex:DY00.1.380402-01_202409
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202409
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202409-d1
+
+  - identifier: ex:DY00.1.380402-01_202410
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202410
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202410-d1
+
+  - identifier: ex:DY00.1.380402-01_202411
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202411
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202411-d1
+
+  - identifier: ex:DY00.1.380402-01_202412
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202412
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:DY00.1.380402-01_202412-d1
+
+  - identifier: ex:ppnet_DY00.1.380402-01_202412
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Undervoltage Scenario - pandapower.auxillary - ppnet_DY00.1.380402-01_202412
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-undervoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:undervoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:ppnet_DY00.1.380402-01_202412
 
 #################################################################
 
@@ -1108,7 +1435,11 @@ concepts:
   - prefLabel: German Node - Overvoltage Scenario Model
     identifier: ex:overvoltage-model
     altLabel: overvoltage-simulation
-  
+
+  - prefLabel: German Node - undervoltage Scenario Model
+    identifier: ex:undervoltage-model
+    altLabel: undervoltage-simulation
+
   - prefLabel: AI Training Data
     identifier: ex:ai-training-data
     altLabel: training-data  
@@ -1219,6 +1550,17 @@ series:
 
   - identifier: ex:german-node-overvoltage-series
     title: German Node - Overvoltage Scenario Series
+    description: |
+      TEST ONLY.
+      This is a child series used to test whether DatasetSeries can belong
+      to another DatasetSeries using dcat:inSeries.
+    publisher:
+      name: EPRI
+
+    inSeries: ex:german-node
+
+  - identifier: ex:german-node-undervoltage-series
+    title: German Node - Undervoltage Scenario Series
     description: |
       TEST ONLY.
       This is a child series used to test whether DatasetSeries can belong
@@ -1639,3 +1981,72 @@ distributions:
     format: json
     issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC60rwmRV1BRYEvbr0qSNJzAVzgdyBUR8JWh65XKd3duas?e=dg0FJ6
+
+  ###############################################################################
+
+  #GERMAN-NODE UNDERVOLTAGE DATASET DISTRIBUTIONS
+
+  - identifier: ex:DY00.1.380402-01_202401-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQDHh1HgDw0WQJy27ACEhkWFAQyZZi8fsJGvBkg_PjgrFAU?e=UHlcSP
+  
+  - identifier: ex:DY00.1.380402-01_202402-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQAEpFDiyLJST4KQAdf0u6MoAUWZ3QL6iyJOVvS5Y_weH10?e=Uyhbrl
+
+  - identifier: ex:DY00.1.380402-01_202403-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQCD2Mt46fgoS5uw02tvr9ocAScOlxgTTY5CIBMZDqcYvvg?e=2c2Sm6
+
+  - identifier: ex:DY00.1.380402-01_202404-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQBRRGHhX0bfSoRbJsv07tuOARARaBITEt4a3K1E6obBZT4?e=uPtutg
+
+  - identifier: ex:DY00.1.380402-01_202405-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQD45756xSJyQLSM-N8PStxyAWSQEUxoKvHHhkBP-7IUHps?e=23dKR5
+
+  - identifier: ex:DY00.1.380402-01_202406-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQA28tz_5He5S5sZ3yCGFLkxAZ5u7F_NFdWnnUHJJCimQzk?e=6urHOF
+    
+  - identifier: ex:DY00.1.380402-01_202407-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQDSFEfSRviQSKHUqZrxIil6AQYP2VyFOKoLZIkRHgSMYMM?e=sbqEpk
+
+  - identifier: ex:DY00.1.380402-01_202408-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQCSjVBqjzcrQq84jw0IFdh3AROlgqWQv6jw71sLvQ_D3kY?e=q9go28
+
+  - identifier: ex:DY00.1.380402-01_202409-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQBr-DDlqQC6S5Txm6XjY3HLAZiTpnpHXAbO2eaGeImqJKQ?e=UqyJmZ
+
+  - identifier: ex:DY00.1.380402-01_202410-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQBTOpjhYqJAS7zooqHvS86KAWZ8ptgj_CL8RNawvegkXXk?e=lKcVA5
+
+  - identifier: ex:DY00.1.380402-01_202411-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQBJCLExakqoSK_NrRXIxbguAedL7Qm-dB4x2F0KOfBfJLc?e=2S9kHz
+
+  - identifier: ex:DY00.1.380402-01_202412-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQBHpky-O0v0TJmcPKiSAkVFAXRDP6Wv3-AFmGCoEi67bB8?e=ehic4L
+
+  - identifier: ex:ppnet_DY00.1.380402-01_202412-d1
+    format: json
+    issued: 2025-06-02
+    accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQChOr6P5vWoSoqTQtQmkwSbAcKpS5dV2thF5YF4ZaZiLJQ?e=mReDpt
