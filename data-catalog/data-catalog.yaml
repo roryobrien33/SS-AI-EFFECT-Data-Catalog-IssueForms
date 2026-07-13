@@ -369,6 +369,33 @@ datasets:
     distribution:
       - ex:ppnet_DW00.1.382280-VE_202412-d1
 
+  - identifier: ex:overloads_Dec_timestamp_distribution
+    description: Taken from the AI-EFFECT EPRI SharePoint Benchmark folder for the German node. The CSV file is used for categorizing each day of the 2024 measurement data as either train or test for the Overload scenario. It also include the corresponding figures used to visualize the data split.
+    title: German Node - Overload Scenario - Timestamp Distribution - overloads_Dec_timestamp_distribution
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-overload-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:overload-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:overloads_Dec_timestamp_distribution-d1
+
+  
+
 #################################################################
 #GERMAN NODE - OVERVOLTAGE SCENARIO DATASETS
   - identifier: ex:DW00.1.385218-BI_202401
@@ -696,8 +723,33 @@ datasets:
     distribution:
       - ex:ppnet_DW00.1.385218-BI_202412-d1
 
+  - identifier: ex:overvoltages_Dec_timestamp_distribution
+    description: Taken from the AI-EFFECT EPRI SharePoint benchmarking folder for the German node. The CSV file is used for categorizing each day of the 2024 measurement data as either train or test for the Overvoltage scenario. It also include the corresponding figures used to visualize the data split.
+    title: German Node - Overvoltage Scenario - Timestamp Distribution Dec - overvoltages_Dec_timestamp_distribution
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-overvoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:overvoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+    distribution:
+      - ex:overvoltages_Dec_timestamp_distribution-d1
+
 #################################################################
-#GERMAN NODE - OVERVOLTAGE SCENARIO DATASETS
+#GERMAN NODE - UNDERVOLTAGE SCENARIO DATASETS
   - identifier: ex:DY00.1.380402-01_202401
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202401
@@ -1024,6 +1076,31 @@ datasets:
       - ex:ppnet_DY00.1.380402-01_202412
 
 #################################################################
+# MISC - DATASETS
+# KPI
+  - identifier: ex:benchmark_kpi
+    description: Taken from the AI-EFFECT EPRI SharePoint benchmarking folder for the German node. The XLSX file is used for collecting relevant information for the benchmark KPIs.
+    title: German Node - Benchmarking - KPIs
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+      - ex:kpi
+    distribution:
+      - ex:benchmark_kpi-d1
 
   - identifier: ex:uc1-regulatory-compliance
     title: Regulatory Compliance Strategy for UC1
@@ -1529,6 +1606,10 @@ concepts:
     identifier: ex:energy-community
     definition: Local energy communities
 
+  - prefLabel: KPI
+    identifier: ex:kpi
+    definition: Key Perfomance Indicator
+
 series:
   - identifier: ex:german-node
     title: AI-Effect - German Node
@@ -1847,7 +1928,7 @@ distributions:
     format: csv
     accessURL: https://example.com/data.csv
 
-  #GERMAN-NODE OVERLOAD DATASET DISTRIBUTIONS
+#GERMAN-NODE OVERLOAD DATASET DISTRIBUTIONS
   - identifier: ex:DW00.1.382280-VE_202401-d1
     format: json
     issued: 2025-06-02
@@ -1913,6 +1994,12 @@ distributions:
     issued: 2026-02-11
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC-aNIBrkLkTKkDZM9PZ1dNAXbSwyH3qixm3qDO49Na2a8?e=ceuwoY
   
+  - identifier: ex:overloads_Dec_timestamp_distribution-d1
+    format: csv
+    issued: 2026-05-14
+    accessURL: https://electricpowerresearch.sharepoint.com/:x:/t/AITEF/IQBJFFXIsPgdT6NV2USI4k7VAWxbmdiEQ60Z5ccmWo0w0MQ?e=8u6Hmh
+
+
   ###############################################################################
 
   #GERMAN-NODE OVERVOLTAGE DATASET DISTRIBUTIONS
@@ -1982,6 +2069,13 @@ distributions:
     issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQC60rwmRV1BRYEvbr0qSNJzAVzgdyBUR8JWh65XKd3duas?e=dg0FJ6
 
+  - identifier: ex:overvoltages_Dec_timestamp_distribution-d1
+    format: csv
+    issued: 2026-05-14
+    accessURL: https://electricpowerresearch.sharepoint.com/:x:/t/AITEF/IQDRdoBvsZCGR7tjK28SI3bJAdu3gS-FV9FO7_Rf1UC89gw?e=GCMIJv
+
+
+
   ###############################################################################
 
   #GERMAN-NODE UNDERVOLTAGE DATASET DISTRIBUTIONS
@@ -2050,3 +2144,12 @@ distributions:
     format: json
     issued: 2025-06-02
     accessURL: https://electricpowerresearch.sharepoint.com/:u:/t/AITEF/IQChOr6P5vWoSoqTQtQmkwSbAcKpS5dV2thF5YF4ZaZiLJQ?e=mReDpt
+
+##############################################################################################
+# MISC - DISTRIBUTIONS
+
+# Benchmark KPIs
+  - identifier: ex:benchmark_kpi-d1
+    format: xlsx
+    issued: 2026-03-23
+    accessURL: https://electricpowerresearch.sharepoint.com/:x:/t/AITEF/IQCY8JONOHrRTKCETVKqS5UjAb2vJT5vMmTfAN9ewCK97MA?e=QkYWco
