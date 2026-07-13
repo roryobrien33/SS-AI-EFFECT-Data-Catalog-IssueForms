@@ -780,7 +780,7 @@ concepts:
     altLabel: overload-simulation
 
   - prefLabel: German Node - Overvoltage Scenario Model
-    identifier: ex:overvoltqge-model
+    identifier: ex:overvoltage-model
     altLabel: overvoltage-simulation
   
   - prefLabel: AI Training Data
