@@ -1086,6 +1086,7 @@ datasets:
     status: published
     license:
       title: TBD
+    inSeries: ex:german-node
     hasPolicy: plcy:internal-use-only
     theme:
       - ex:ai-training-data
