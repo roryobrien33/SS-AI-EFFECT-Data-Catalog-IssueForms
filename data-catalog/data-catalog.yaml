@@ -748,7 +748,7 @@ datasets:
     distribution:
       - ex:DY00.1.380402-01_202402-d1
 
-    - identifier: ex:DY00.1.380402-01_202403
+  - identifier: ex:DY00.1.380402-01_202403
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202403
     publisher:
@@ -848,7 +848,7 @@ datasets:
     distribution:
       - ex:DY00.1.380402-01_202406-d1
 
-    - identifier: ex:DY00.1.380402-01_202407
+  - identifier: ex:DY00.1.380402-01_202407
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Undervoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Undervoltage Scenario - Load Profile DY00.1.380402-01_202407
     publisher:
