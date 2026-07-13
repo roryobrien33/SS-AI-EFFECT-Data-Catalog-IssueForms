@@ -671,7 +671,7 @@ datasets:
     distribution:
       - ex:DW00.1.385218-BI_202412-d1
 
-  - identifier: ppnet_DW00.1.385218-BI_202412
+  - identifier: ex:ppnet_DW00.1.385218-BI_202412
     description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
     title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
     publisher:
