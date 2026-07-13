@@ -891,24 +891,6 @@ series:
 
     inSeries: ex:german-node
 
-  - identifier: ex:german-node
-    title: AI-Effect - German Node
-    description: |
-      This series contains all the datasets related to AI-Effect TEF German node.
-    publisher:
-      name: EPRI
-  
-  - identifier: ex:german-node-overload-series
-    title: German Node - Overload Scenario Series
-    description: |
-      TEST ONLY.
-      This is a child series used to test whether DatasetSeries can belong
-      to another DatasetSeries using dcat:inSeries.
-    publisher:
-      name: EPRI
-
-    inSeries: ex:german-node
-
   - identifier: ex:german-node-overvoltage-series
     title: German Node - Overvoltage Scenario Series
     description: |
