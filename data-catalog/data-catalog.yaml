@@ -346,7 +346,32 @@ datasets:
       - ex:grid-actions
 
 #################################################################
-    
+#GERMAN NODE - OVERVOLTAGE SCENARIO DATASETS
+  - identifier: ex:DW00.1.385218-BI_202401
+    description: Taken from the AI-EFFECT EPRI SharePoint folder for the Overvoltage Scenario. Includes the twelve monthly models, including the corresponding monthly measurement data, as well as the distilled PPNet JSON file for December (=JSON containing only the grid, no measurement data, transformers stripped), which was usec in the project.
+    title: German Node - Overvoltage Scenario - Load Profile DW00.1.385218-BI_202401
+    publisher:
+      name: ENEL
+    status: published
+    license:
+      title: TBD
+    inSeries: ex:german-node-overvoltage-series
+    hasPolicy: plcy:internal-use-only
+    theme:
+      - ex:overvoltage-model
+      - ex:ai-training-data
+      - ex:ai-testing-data
+      - ex:energy
+      - ex:enel
+      - ex:grid
+      - ex:grid-data
+      - ex:dso-data
+      - ex:grid-model
+      - ex:measurment-data
+      - ex:grid-actions
+
+#################################################################
+
   - identifier: ex:uc1-regulatory-compliance
     title: Regulatory Compliance Strategy for UC1
     publisher:
@@ -752,7 +777,11 @@ datasets:
 concepts:
   - prefLabel: German Node - Overload Scenario Model
     identifier: ex:overload-model
-    altLabel: overload-model 
+    altLabel: overload-simulation
+
+  - prefLabel: German Node - Overvoltage Scenario Model
+    identifier: ex:overvoltqge-model
+    altLabel: overvoltage-simulation
   
   - prefLabel: AI Training Data
     identifier: ex:ai-training-data
@@ -793,9 +822,6 @@ concepts:
   - prefLabel: grid-actions
     identifier: ex:grid-actions
     altLabel: switching
-
-  
-  
   
   - prefLabel: energy
     identifier: ex:energy
@@ -845,6 +871,7 @@ concepts:
   - prefLabel: energy community
     identifier: ex:energy-community
     definition: Local energy communities
+
 series:
   - identifier: ex:german-node
     title: AI-Effect - German Node
@@ -855,6 +882,35 @@ series:
   
   - identifier: ex:german-node-overload-series
     title: German Node - Overload Scenario Series
+    description: |
+      TEST ONLY.
+      This is a child series used to test whether DatasetSeries can belong
+      to another DatasetSeries using dcat:inSeries.
+    publisher:
+      name: EPRI
+
+    inSeries: ex:german-node
+
+  - identifier: ex:german-node
+    title: AI-Effect - German Node
+    description: |
+      This series contains all the datasets related to AI-Effect TEF German node.
+    publisher:
+      name: EPRI
+  
+  - identifier: ex:german-node-overload-series
+    title: German Node - Overload Scenario Series
+    description: |
+      TEST ONLY.
+      This is a child series used to test whether DatasetSeries can belong
+      to another DatasetSeries using dcat:inSeries.
+    publisher:
+      name: EPRI
+
+    inSeries: ex:german-node
+
+  - identifier: ex:german-node-overvoltage-series
+    title: German Node - Overvoltage Scenario Series
     description: |
       TEST ONLY.
       This is a child series used to test whether DatasetSeries can belong
